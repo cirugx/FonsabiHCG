@@ -86,6 +86,45 @@ async function getFirstSheetName(sheets: any, spreadsheetId: string): Promise<st
   }
 }
 
+// Helper to normalise dates to ISO (YYYY-MM-DD)
+function parseSheetDateToISO(dateStr: string): string {
+  if (!dateStr) return "";
+  const trimmed = dateStr.trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return trimmed;
+  }
+  const match = trimmed.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
+  if (match) {
+    const day = match[1].padStart(2, '0');
+    const month = match[2].padStart(2, '0');
+    const year = match[3];
+    return `${year}-${month}-${day}`;
+  }
+  const matchYMD = trimmed.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})$/);
+  if (matchYMD) {
+    const year = matchYMD[1];
+    const month = matchYMD[2].padStart(2, '0');
+    const day = matchYMD[3].padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  return trimmed;
+}
+
+// Helper to clean numerical values (replace comma decimals and remove spaces)
+function cleanNum(val: any): number {
+  if (val === undefined || val === null) return 0;
+  if (typeof val === 'number') return val;
+  const str = String(val).replace(/\s/g, "");
+  let sanitized = str;
+  if (str.includes(",") && str.includes(".")) {
+    sanitized = str.replace(/,/g, "");
+  } else if (str.includes(",")) {
+    sanitized = str.replace(/,/g, ".");
+  }
+  const num = parseFloat(sanitized);
+  return isNaN(num) ? 0 : num;
+}
+
 // Endpoints
 
 // 1. Obtener y filtrar filas de Google Sheets
@@ -132,6 +171,7 @@ app.get("/api/entries", async (req, res) => {
     const idxRemision = headers.indexOf("Remisión");
     const idxFechaAuth = headers.indexOf("Fecha Autorización");
     const idxUserAuth = headers.indexOf("Usuario Autorización");
+    const idxNotaRechazo = headers.indexOf("Nota de Rechazo");
 
     const entries = [];
 
@@ -153,6 +193,7 @@ app.get("/api/entries", async (req, res) => {
         remision: idxRemision !== -1 ? cellStr(row[idxRemision]) : "",
         fechaAutorizacion: idxFechaAuth !== -1 ? cellStr(row[idxFechaAuth]) : "",
         usuarioAutorizacion: idxUserAuth !== -1 ? cellStr(row[idxUserAuth]) : "",
+        notaRechazo: idxNotaRechazo !== -1 ? cellStr(row[idxNotaRechazo]) : "",
       });
     }
 
@@ -311,6 +352,7 @@ app.post("/api/verify-pdf", async (req, res) => {
         const idxCosto = headers.indexOf("Costo por Unidad");
         const idxProveedor = headers.indexOf("Proveedor");
         const idxRemision = headers.indexOf("Remisión");
+        const idxNotaRechazo = headers.indexOf("Nota de Rechazo");
 
         for (let i = 1; i < rows.length; i++) {
           const row = rows[i];
@@ -327,6 +369,7 @@ app.post("/api/verify-pdf", async (req, res) => {
               costoUnidad: idxCosto !== -1 ? cellStr(row[idxCosto]) : "",
               proveedor: idxProveedor !== -1 ? cellStr(row[idxProveedor]) : "",
               remision: idxRemision !== -1 ? cellStr(row[idxRemision]) : "",
+              notaRechazo: idxNotaRechazo !== -1 ? cellStr(row[idxNotaRechazo]) : "",
             };
             break;
           }
@@ -500,9 +543,20 @@ Adicionalmente, describe en 'observaciones' brevemente qué tipo de documento es
     const sanitizeStr = (s: string) => s.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
 
     const loteMatch = sanitizeStr(targetEntry.lote) === sanitizeStr(extracted.lote);
-    const dateMatch = targetEntry.fechaCaducidad === extracted.fechaCaducidad;
-    const cantidadMatch = Number(targetEntry.cantidad) === Number(extracted.cantidad);
-    const costoMatch = Math.abs(Number(targetEntry.costoUnidad) - Number(extracted.costoUnidad)) < 0.01;
+    
+    // Use robust date normalisation
+    const sheetDate = parseSheetDateToISO(targetEntry.fechaCaducidad);
+    const pdfDate = parseSheetDateToISO(extracted.fechaCaducidad);
+    const dateMatch = sheetDate === pdfDate && sheetDate !== "";
+
+    // Use clean numeric parser to avoid comma/dot issues
+    const sheetQty = cleanNum(targetEntry.cantidad);
+    const pdfQty = cleanNum(extracted.cantidad);
+    const cantidadMatch = sheetQty === pdfQty;
+
+    const sheetCost = cleanNum(targetEntry.costoUnidad);
+    const pdfCost = cleanNum(extracted.costoUnidad);
+    const costoMatch = Math.abs(sheetCost - pdfCost) < 0.01;
     
     // Proveedor loose match
     const p1 = targetEntry.proveedor.toLowerCase();
@@ -580,7 +634,7 @@ Adicionalmente, describe en 'observaciones' brevemente qué tipo de documento es
 // 4. Autorizar o rechazar entrada en Google Sheets
 app.post("/api/authorize-entry", async (req, res) => {
   const authHeader = req.headers.authorization;
-  const { spreadsheetId, entryNo, estatus, userEmail } = req.body;
+  const { spreadsheetId, entryNo, estatus, userEmail, notaRechazo } = req.body;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ error: "No autorizado. Token de Google requerido." });
@@ -617,9 +671,25 @@ app.post("/api/authorize-entry", async (req, res) => {
     const idxEstatus = headers.indexOf("Estatus");
     const idxFechaAuth = headers.indexOf("Fecha Autorización");
     const idxUserAuth = headers.indexOf("Usuario Autorización");
+    let idxNotaRechazo = headers.indexOf("Nota de Rechazo");
 
     if (idxNo === -1 || idxEstatus === -1) {
       return res.status(400).json({ error: "Estructura de hoja inválida. Falta columna 'No.' o 'Estatus'." });
+    }
+
+    // Handle dynamically creating the "Nota de Rechazo" header if missing
+    if (idxNotaRechazo === -1) {
+      idxNotaRechazo = headers.length;
+      headers.push("Nota de Rechazo");
+      // Update first row of sheet to include the new header column
+      await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: `${sheetName}!A1:ZZ1`,
+        valueInputOption: "USER_ENTERED",
+        requestBody: {
+          values: [headers]
+        }
+      });
     }
 
     let rowIndex = -1;
@@ -640,7 +710,12 @@ app.post("/api/authorize-entry", async (req, res) => {
     const updatedRow = [...existingRow];
 
     // Ensure the array has enough cells to reach the columns we want to edit
-    const maxIdx = Math.max(idxEstatus, idxFechaAuth !== -1 ? idxFechaAuth : 0, idxUserAuth !== -1 ? idxUserAuth : 0);
+    const maxIdx = Math.max(
+      idxEstatus, 
+      idxFechaAuth !== -1 ? idxFechaAuth : 0, 
+      idxUserAuth !== -1 ? idxUserAuth : 0,
+      idxNotaRechazo !== -1 ? idxNotaRechazo : 0
+    );
     while (updatedRow.length <= maxIdx) {
       updatedRow.push("");
     }
@@ -652,6 +727,9 @@ app.post("/api/authorize-entry", async (req, res) => {
     }
     if (idxUserAuth !== -1) {
       updatedRow[idxUserAuth] = estatus === "Autorizado" ? (userEmail || "sistema@fonsabi.gob.mx") : "";
+    }
+    if (idxNotaRechazo !== -1) {
+      updatedRow[idxNotaRechazo] = estatus === "Rechazado" ? (notaRechazo || "Rechazado por discrepancia de datos") : "";
     }
 
     // Guardar abriendo el rango hasta la columna ZZ para no recortar la fila
@@ -689,6 +767,7 @@ app.post("/api/authorize-entry", async (req, res) => {
       remision: idxRemision !== -1 ? cellStr(updatedRow[idxRemision]) : "",
       fechaAutorizacion: idxFechaAuth !== -1 ? cellStr(updatedRow[idxFechaAuth]) : "",
       usuarioAutorizacion: idxUserAuth !== -1 ? cellStr(updatedRow[idxUserAuth]) : "",
+      notaRechazo: idxNotaRechazo !== -1 ? cellStr(updatedRow[idxNotaRechazo]) : "",
     };
 
     return res.json({
@@ -700,6 +779,142 @@ app.post("/api/authorize-entry", async (req, res) => {
   } catch (error: any) {
     console.error("Error al actualizar Google Sheets:", error);
     return res.status(500).json({ error: `Error de Google Sheets API: ${error.message}` });
+  }
+});
+
+// 5. Generar Oficio de Validación consolidado en Google Docs
+app.post("/api/generate-oficio", async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const { selectedEntries, templateId, userEmail } = req.body;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "No autorizado. Token de Google requerido." });
+  }
+  if (!selectedEntries || !Array.isArray(selectedEntries) || selectedEntries.length === 0) {
+    return res.status(400).json({ error: "Se requiere un arreglo de registros (selectedEntries)." });
+  }
+
+  const token = authHeader.split(" ")[1];
+  try {
+    const oauth2Client = createOAuth2Client(token);
+    const docs = google.docs({ version: "v1", auth: oauth2Client });
+    const drive = google.drive({ version: "v3", auth: oauth2Client });
+
+    let documentId: string;
+    const todayDateStr = new Date().toISOString().split("T")[0];
+    const docTitle = `Oficio de Validación Consolidado - FONSABI - ${todayDateStr}`;
+
+    if (templateId) {
+      const copyResponse = await drive.files.copy({
+        fileId: templateId,
+        requestBody: {
+          name: docTitle
+        }
+      });
+      documentId = copyResponse.data.id!;
+    } else {
+      const createResponse = await docs.documents.create({
+        requestBody: {
+          title: docTitle
+        }
+      });
+      documentId = createResponse.data.documentId!;
+    }
+
+    // Build the consolidated table of approved inputs
+    let tableText = "";
+    tableText += "-------------------------------------------------------------------------------------------------------------------------\n";
+    tableText += "No.  | Código FONSABI | Lote            | Cant. | Costo U. | Proveedor / Remisión / Descripción\n";
+    tableText += "-------------------------------------------------------------------------------------------------------------------------\n";
+
+    selectedEntries.forEach((entry: any) => {
+      const no = String(entry.no || "").padEnd(4, ' ');
+      const code = String(entry.codigoFonsabi || "").padEnd(14, ' ');
+      const lote = String(entry.lote || "").padEnd(15, ' ');
+      const cant = String(entry.cantidad || "").padEnd(5, ' ');
+      const costo = `$${Number(entry.costoUnidad || 0).toFixed(2)}`.padEnd(8, ' ');
+      const provStr = `${entry.proveedor || "N/A"} (REM: ${entry.remision || "N/A"}) - ${entry.descripcion || ""}`;
+      tableText += `${no} | ${code} | ${lote} | ${cant} | ${costo} | ${provStr}\n`;
+    });
+    tableText += "-------------------------------------------------------------------------------------------------------------------------\n";
+
+    const localTodayStr = new Date().toLocaleDateString("es-MX", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+    const bodyText = `OFICIO DE VALIDACIÓN Y CONSOLIDACIÓN DE INSUMOS MÉDICOS
+FONSABI (Fondo de Salud para el Bienestar)
+
+Fecha de emisión: ${localTodayStr}
+Asunto: Acta de Recepción y Oficio de Validación de Insumos Médicos Aprobados
+
+A QUIEN CORRESPONDA:
+
+Por medio de la presente, la Dirección de Control de Insumos y Logística de FONSABI hace constar que se ha completado con éxito el dictamen de validación física, analítica y documental de las siguientes entradas de medicamentos e insumos médicos en el sistema de control del almacén. 
+
+Tras haber realizado el proceso automatizado de cotejo inteligente (computación de discrepancias en lote, caducidad, cantidades e importes unitarios contra las remisiones en formato PDF firmadas por los proveedores), se confirma que los siguientes registros de insumos cumplen plenamente con las especificaciones técnicas y administrativas registradas en el sistema:
+
+${tableText}
+
+Resumen de Validación:
+- Partidas consolidadas: ${selectedEntries.length}
+- Estado del Dictamen: TOTALMENTE AUTORIZADO Y CONSOLIDADO
+- Operador responsable: ${userEmail || "sistema@fonsabi.gob.mx"}
+
+Este documento electrónico sirve como Oficio de Validación formal y constancia de recepción de conformidad de los bienes para su integración inmediata al inventario y posterior distribución en los centros de salud autorizados.
+
+Atentamente,
+
+___________________________________________
+DIRECCIÓN DE CONTROL DE INSUMOS Y LOGÍSTICA
+FONSABI - GOBIERNO DE MÉXICO
+`;
+
+    // Inyectar mediante batchUpdate (insertText) el cuerpo formal
+    await docs.documents.batchUpdate({
+      documentId,
+      requestBody: {
+        requests: [
+          {
+            insertText: {
+              location: {
+                index: 1,
+              },
+              text: bodyText
+            }
+          }
+        ]
+      }
+    });
+
+    // Cambiar permisos a público lector para que se pueda abrir directamente
+    try {
+      await drive.permissions.create({
+        fileId: documentId,
+        requestBody: {
+          role: "reader",
+          type: "anyone"
+        }
+      });
+    } catch (permError: any) {
+      console.warn("No se pudieron otorgar permisos de lectura general al Oficio:", permError.message);
+    }
+
+    const documentUrl = `https://docs.google.com/document/d/${documentId}/edit`;
+
+    return res.json({
+      success: true,
+      documentId,
+      documentUrl
+    });
+
+  } catch (error: any) {
+    console.error("Error al generar Oficio de Google Docs:", error);
+    return res.status(500).json({ error: `Error de Google Docs/Drive API: ${error.message}` });
   }
 });
 

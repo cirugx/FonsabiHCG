@@ -446,6 +446,8 @@ export default function App() {
                 isLoading={isLoadingEntries}
                 onInitializeMock={handleCreateTemplate}
                 isInitializing={isInitializingSheet}
+                accessToken={accessToken || ""}
+                user={user}
               />
             ) : (
               <VerificationWorkspace

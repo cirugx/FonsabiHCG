@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { FonsabiEntry } from "../types";
+import { motion } from "motion/react";
 import { 
   ClipboardList, 
   CheckCircle2, 
@@ -18,7 +19,8 @@ import {
   DollarSign,
   Clock,
   UserCheck,
-  ShieldAlert
+  ShieldAlert,
+  X
 } from "lucide-react";
 
 interface DashboardProps {
@@ -29,6 +31,8 @@ interface DashboardProps {
   isLoading: boolean;
   onInitializeMock: () => void;
   isInitializing: boolean;
+  accessToken: string;
+  user: any;
 }
 
 export default function Dashboard({
@@ -38,10 +42,63 @@ export default function Dashboard({
   onRefresh,
   isLoading,
   onInitializeMock,
-  isInitializing
+  isInitializing,
+  accessToken,
+  user
 }: DashboardProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("Todos");
+
+  // Selection states
+  const [selectedEntries, setSelectedEntries] = useState<FonsabiEntry[]>([]);
+  const [isGeneratingOficio, setIsGeneratingOficio] = useState(false);
+  const [oficioError, setOficioError] = useState("");
+
+  const handleToggleSelect = (entry: FonsabiEntry) => {
+    setSelectedEntries(prev => {
+      const exists = prev.some(e => e.no === entry.no);
+      if (exists) {
+        return prev.filter(e => e.no !== entry.no);
+      } else {
+        return [...prev, entry];
+      }
+    });
+  };
+
+  const handleGenerateOficio = async () => {
+    if (selectedEntries.length < 2) return;
+    setIsGeneratingOficio(true);
+    setOficioError("");
+    try {
+      const response = await fetch("/api/generate-oficio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          selectedEntries,
+          userEmail: user?.email
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Fallo al generar el Oficio.");
+      }
+
+      if (data.documentUrl) {
+        window.open(data.documentUrl, "_blank", "noopener,noreferrer");
+      } else {
+        alert("Oficio generado con éxito, pero no se recibió la dirección de acceso.");
+      }
+    } catch (err: any) {
+      console.error("Error generating Oficio:", err);
+      setOficioError(err.message || "Error al conectar con la API de generación de oficios.");
+    } finally {
+      setIsGeneratingOficio(false);
+    }
+  };
 
   // Calculate Metrics
   const metrics = useMemo(() => {
@@ -75,6 +132,33 @@ export default function Dashboard({
       return matchesSearch && matchesStatus;
     });
   }, [entries, searchTerm, statusFilter]);
+
+  // Selectable and Selected status helpers for consolidating approved items
+  const authorizedFiltered = useMemo(() => {
+    return filteredEntries.filter(e => e.estatus === "Autorizado");
+  }, [filteredEntries]);
+
+  const isAllSelected = useMemo(() => {
+    if (authorizedFiltered.length === 0) return false;
+    return authorizedFiltered.every(e => selectedEntries.some(s => s.no === e.no));
+  }, [authorizedFiltered, selectedEntries]);
+
+  const handleToggleSelectAll = () => {
+    if (isAllSelected) {
+      const filteredNos = authorizedFiltered.map(e => e.no);
+      setSelectedEntries(prev => prev.filter(e => !filteredNos.includes(e.no)));
+    } else {
+      setSelectedEntries(prev => {
+        const union = [...prev];
+        authorizedFiltered.forEach(e => {
+          if (!union.some(u => u.no === e.no)) {
+            union.push(e);
+          }
+        });
+        return union;
+      });
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -192,6 +276,60 @@ export default function Dashboard({
         </div>
       </div>
 
+      {/* Floating/Integrated Consolidated Oficio Banner */}
+      {selectedEntries.length > 0 && (
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-blue-600 text-white p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-blue-500/15 border border-blue-500/30"
+        >
+          <div className="flex items-center gap-2.5">
+            <span className="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center text-xs font-bold font-mono text-white">
+              {selectedEntries.length}
+            </span>
+            <div>
+              <p className="text-xs font-bold leading-none">Registros Autorizados Seleccionados</p>
+              <p className="text-[10px] text-blue-100 mt-1">Listo para generar el Oficio de Validación Consolidado de Google Docs.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button
+              onClick={() => setSelectedEntries([])}
+              className="px-3.5 py-2 text-xs font-bold text-blue-100 hover:text-white hover:bg-white/10 rounded-xl transition-all cursor-pointer"
+            >
+              Limpiar Selección
+            </button>
+            <button
+              onClick={handleGenerateOficio}
+              disabled={selectedEntries.length < 2 || isGeneratingOficio}
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2 bg-white text-blue-700 hover:bg-slate-100 disabled:opacity-50 text-xs font-extrabold rounded-xl transition-all cursor-pointer shadow-md shadow-blue-700/10"
+              title={selectedEntries.length < 2 ? "Selecciona al menos 2 registros autorizados para consolidar" : "Generar acta en Google Docs"}
+            >
+              {isGeneratingOficio ? (
+                <>
+                  <RefreshCw className="animate-spin" size={13} />
+                  Generando Oficio...
+                </>
+              ) : (
+                <>
+                  <ExternalLink size={13} />
+                  Generar Oficio de Entrada ({selectedEntries.length})
+                </>
+              )}
+            </button>
+          </div>
+        </motion.div>
+      )}
+
+      {oficioError && (
+        <div className="p-3.5 bg-red-500/10 text-xs text-red-700 font-bold rounded-xl border border-red-500/20 flex justify-between items-center">
+          <span>{oficioError}</span>
+          <button onClick={() => setOficioError("")} className="text-red-500 font-bold">
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
       {/* Main Table Card */}
       <div className="bg-white/45 backdrop-blur-lg rounded-2xl border border-white/60 shadow-[0_8px_32px_0_rgba(15,23,42,0.04)] overflow-hidden">
         {isLoading ? (
@@ -224,6 +362,16 @@ export default function Dashboard({
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                  <th className="py-4 px-4 text-center w-12">
+                    <input
+                      type="checkbox"
+                      checked={isAllSelected}
+                      onChange={handleToggleSelectAll}
+                      disabled={authorizedFiltered.length === 0}
+                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-3.5 w-3.5 cursor-pointer accent-blue-600"
+                      title="Seleccionar todos los autorizados"
+                    />
+                  </th>
                   <th className="py-4 px-6 text-center w-16">Item</th>
                   <th className="py-4 px-6">Medicamento / Clave FONSABI</th>
                   <th className="py-4 px-6">Identificación (Lote / Caducidad)</th>
@@ -234,17 +382,34 @@ export default function Dashboard({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200/60 text-xs">
-                {filteredEntries.map((entry, index) => (
-                  <tr 
-                    key={`${entry.no}-${index}`}
-                    className="hover:bg-slate-50/80 transition-all duration-150 group"
-                  >
-                    {/* Item Number Badge */}
-                    <td className="py-4 px-6 text-center">
-                      <span className="inline-flex w-7 h-7 rounded-lg bg-slate-100 border border-slate-200 items-center justify-center font-mono text-xs font-bold text-slate-600 shadow-2xs">
-                        {entry.no}
-                      </span>
-                    </td>
+                {filteredEntries.map((entry, index) => {
+                  const isSelected = selectedEntries.some(e => e.no === entry.no);
+                  const isAuthorized = entry.estatus === "Autorizado";
+                  return (
+                    <tr 
+                      key={`${entry.no}-${index}`}
+                      className={`hover:bg-slate-50/80 transition-all duration-150 group ${isSelected ? "bg-blue-50/20" : ""}`}
+                    >
+                      {/* Checkbox Column */}
+                      <td className="py-4 px-4 text-center">
+                        {isAuthorized ? (
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => handleToggleSelect(entry)}
+                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-3.5 w-3.5 cursor-pointer accent-blue-600"
+                          />
+                        ) : (
+                          <div className="w-3.5 h-3.5 mx-auto rounded bg-slate-100 border border-slate-200 cursor-not-allowed" title="Sólo registros autorizados se pueden consolidar" />
+                        )}
+                      </td>
+
+                      {/* Item Number Badge */}
+                      <td className="py-4 px-6 text-center">
+                        <span className="inline-flex w-7 h-7 rounded-lg bg-slate-100 border border-slate-200 items-center justify-center font-mono text-xs font-bold text-slate-600 shadow-2xs">
+                          {entry.no}
+                        </span>
+                      </td>
 
                     {/* Description and Clave */}
                     <td className="py-4 px-6 max-w-[280px]">
@@ -325,7 +490,7 @@ export default function Dashboard({
                       </button>
                     </td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
             
