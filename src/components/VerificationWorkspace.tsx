@@ -460,72 +460,29 @@ export default function VerificationWorkspace({
                     <div className="font-bold flex items-center gap-1.5 text-red-900">
                       <X size={16} /> Entrada Rechazada por Discrepancia
                     </div>
-                    <p>Se emitió una nota de devolución y se actualizó en la base de datos Google Sheets.</p>
-                    <div className="font-mono text-[10px] bg-white p-2 rounded-md border border-red-200 mt-2">
-                      <span className="text-red-400 block font-bold">Motivo del Rechazo:</span>
-                      <span className="text-slate-700 italic">"{entry.notaRechazo || "Discrepancia en cotejo físico"}"</span>
-                    </div>
+                    <p>Se actualizó el estatus de la entrada a 'Rechazado' en la base de datos Google Sheets debido a inconsistencias de datos.</p>
                   </div>
                 ) : (
                   /* Active validation workflow actions */
                   <div className="space-y-4">
-                    {isRejectMode ? (
-                      <motion.div 
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-red-50/50 p-4 rounded-xl border border-red-100 space-y-3"
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <button
+                        onClick={() => openConfirmation("Rechazado")}
+                        disabled={isUpdating}
+                        className="flex-1 py-2.5 px-4 bg-white hover:bg-slate-50 border border-red-200 hover:border-red-300 text-red-600 rounded-xl text-xs font-bold transition-colors cursor-pointer text-center flex items-center justify-center gap-1.5"
                       >
-                        <div className="flex items-center justify-between">
-                          <label className="text-xs font-bold text-red-800">Generación de Nota de Devolución</label>
-                          <button 
-                            onClick={() => setIsRejectMode(false)}
-                            className="text-slate-400 hover:text-slate-600"
-                          >
-                            <X size={16} />
-                          </button>
-                        </div>
-                        <textarea
-                          placeholder="Describe con precisión la inconsistencia encontrada en el PDF para notificar al proveedor..."
-                          value={rejectNote}
-                          onChange={(e) => setRejectNote(e.target.value)}
-                          className="w-full h-20 p-2 text-xs rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-red-500 text-slate-800 outline-none"
-                        />
-                        <div className="flex justify-end gap-2">
-                          <button
-                            onClick={() => setIsRejectMode(false)}
-                            className="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-semibold"
-                          >
-                            Cancelar
-                          </button>
-                          <button
-                            onClick={() => openConfirmation("Rechazado")}
-                            disabled={isUpdating}
-                            className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold"
-                          >
-                            Confirmar Rechazo y Firmar
-                          </button>
-                        </div>
-                      </motion.div>
-                    ) : (
-                      <div className="flex flex-col sm:flex-row gap-3">
-                        <button
-                          onClick={() => setIsRejectMode(true)}
-                          disabled={isUpdating}
-                          className="flex-1 py-2.5 px-4 bg-white hover:bg-slate-50 border border-red-200 hover:border-red-300 text-red-600 rounded-xl text-xs font-bold transition-colors cursor-pointer text-center flex items-center justify-center gap-1.5"
-                        >
-                          <X size={14} />
-                          Rechazar por Discrepancia
-                        </button>
-                        <button
-                          onClick={() => openConfirmation("Autorizado")}
-                          disabled={isUpdating || report.matchPercentage < 50}
-                          className="flex-1 py-2.5 px-4 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
-                        >
-                          <FileCheck size={14} />
-                          Autorizar Entrada Almacén
-                        </button>
-                      </div>
-                    )}
+                        <X size={14} />
+                        Rechazar por Discrepancia
+                      </button>
+                      <button
+                        onClick={() => openConfirmation("Autorizado")}
+                        disabled={isUpdating || report.matchPercentage < 50}
+                        className="flex-1 py-2.5 px-4 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+                      >
+                        <FileCheck size={14} />
+                        Autorizar Entrada Almacén
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -573,9 +530,6 @@ export default function VerificationWorkspace({
                         {modalType === "Autorizado" ? "AUTORIZADO" : "RECHAZADO"}
                       </span>
                     </div>
-                    {modalType === "Rechazado" && (
-                      <div><span className="text-red-400">Nota:</span> "{rejectNote}"</div>
-                    )}
                   </div>
                 </div>
 

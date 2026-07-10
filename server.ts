@@ -108,7 +108,7 @@ app.get("/api/entries", async (req, res) => {
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: `${sheetName}!A1:N150`,
+      range: `${sheetName}!A1:ZZ1000`,
     });
 
     const rows = response.data.values;
@@ -116,28 +116,43 @@ app.get("/api/entries", async (req, res) => {
       return res.json({ entries: [], headers: [] });
     }
 
-    const headers = rows[0].map(h => cellStr(h));
+    const headers = rows[0].map(h => cellStr(h).trim());
+
+    // Encontrar las posiciones de las columnas dinámicamente por su nombre exacto o variaciones
+    const idxNo = headers.indexOf("No.");
+    const idxCodigo = headers.indexOf("Código FONSABI");
+    const idxDesc = headers.indexOf("Descripción");
+    const idxEstatus = headers.indexOf("Estatus");
+    const idxPdf = headers.indexOf("PDF");
+    const idxLote = headers.indexOf("Lote");
+    const idxFechaCad = headers.indexOf("Fecha de Caducidad");
+    const idxCantidad = headers.indexOf("Cantidad ") !== -1 ? headers.indexOf("Cantidad ") : headers.indexOf("Cantidad Unitaria");
+    const idxCosto = headers.indexOf("Costo por Unidad");
+    const idxProveedor = headers.indexOf("Proveedor");
+    const idxRemision = headers.indexOf("Remisión");
+    const idxFechaAuth = headers.indexOf("Fecha Autorización");
+    const idxUserAuth = headers.indexOf("Usuario Autorización");
+
     const entries = [];
 
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
-      if (!row || row.length === 0 || !cellStr(row[0])) continue; // Skip empty rows or rows without No.
+      if (!row || row.length === 0 || idxNo === -1 || !cellStr(row[idxNo])) continue; // Skip empty rows or rows without No.
 
       entries.push({
-        no: cellStr(row[0]),
-        codigoFonsabi: cellStr(row[1]),
-        descripcion: cellStr(row[2]),
-        estatus: (cellStr(row[3]) || "Sin autorizar") as any,
-        pdf: cellStr(row[4]),
-        lote: cellStr(row[5]),
-        fechaCaducidad: cellStr(row[6]),
-        cantidad: cellStr(row[7]),
-        costoUnidad: cellStr(row[8]),
-        proveedor: cellStr(row[9]),
-        remision: cellStr(row[10]),
-        fechaAutorizacion: cellStr(row[11]),
-        usuarioAutorizacion: cellStr(row[12]),
-        notaRechazo: cellStr(row[13]),
+        no: cellStr(row[idxNo]),
+        codigoFonsabi: idxCodigo !== -1 ? cellStr(row[idxCodigo]) : "",
+        descripcion: idxDesc !== -1 ? cellStr(row[idxDesc]) : "",
+        estatus: (idxEstatus !== -1 ? cellStr(row[idxEstatus]) : "Sin autorizar") || "Sin autorizar",
+        pdf: idxPdf !== -1 ? cellStr(row[idxPdf]) : "",
+        lote: idxLote !== -1 ? cellStr(row[idxLote]) : "",
+        fechaCaducidad: idxFechaCad !== -1 ? cellStr(row[idxFechaCad]) : "",
+        cantidad: idxCantidad !== -1 ? cellStr(row[idxCantidad]) : "",
+        costoUnidad: idxCosto !== -1 ? cellStr(row[idxCosto]) : "",
+        proveedor: idxProveedor !== -1 ? cellStr(row[idxProveedor]) : "",
+        remision: idxRemision !== -1 ? cellStr(row[idxRemision]) : "",
+        fechaAutorizacion: idxFechaAuth !== -1 ? cellStr(row[idxFechaAuth]) : "",
+        usuarioAutorizacion: idxUserAuth !== -1 ? cellStr(row[idxUserAuth]) : "",
       });
     }
 
@@ -280,25 +295,38 @@ app.post("/api/verify-pdf", async (req, res) => {
       const sheetName = await getFirstSheetName(sheets, spreadsheetId);
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: `${sheetName}!A1:N150`,
+        range: `${sheetName}!A1:ZZ1000`,
       });
       const rows = response.data.values;
-      if (rows) {
+      if (rows && rows.length > 0) {
+        const headers = rows[0].map(h => cellStr(h).trim());
+        const idxNo = headers.indexOf("No.");
+        const idxCodigo = headers.indexOf("Código FONSABI");
+        const idxDesc = headers.indexOf("Descripción");
+        const idxEstatus = headers.indexOf("Estatus");
+        const idxPdf = headers.indexOf("PDF");
+        const idxLote = headers.indexOf("Lote");
+        const idxFechaCad = headers.indexOf("Fecha de Caducidad");
+        const idxCantidad = headers.indexOf("Cantidad ") !== -1 ? headers.indexOf("Cantidad ") : headers.indexOf("Cantidad Unitaria");
+        const idxCosto = headers.indexOf("Costo por Unidad");
+        const idxProveedor = headers.indexOf("Proveedor");
+        const idxRemision = headers.indexOf("Remisión");
+
         for (let i = 1; i < rows.length; i++) {
           const row = rows[i];
-          if (row && cellStr(row[0]) === String(entryNo)) {
+          if (row && idxNo !== -1 && cellStr(row[idxNo]) === String(entryNo)) {
             targetEntry = {
-              no: cellStr(row[0]),
-              codigoFonsabi: cellStr(row[1]),
-              descripcion: cellStr(row[2]),
-              estatus: cellStr(row[3]) || "Sin autorizar",
-              pdf: cellStr(row[4]),
-              lote: cellStr(row[5]),
-              fechaCaducidad: cellStr(row[6]),
-              cantidad: cellStr(row[7]),
-              costoUnidad: cellStr(row[8]),
-              proveedor: cellStr(row[9]),
-              remision: cellStr(row[10]),
+              no: cellStr(row[idxNo]),
+              codigoFonsabi: idxCodigo !== -1 ? cellStr(row[idxCodigo]) : "",
+              descripcion: idxDesc !== -1 ? cellStr(row[idxDesc]) : "",
+              estatus: (idxEstatus !== -1 ? cellStr(row[idxEstatus]) : "Sin autorizar") || "Sin autorizar",
+              pdf: idxPdf !== -1 ? cellStr(row[idxPdf]) : "",
+              lote: idxLote !== -1 ? cellStr(row[idxLote]) : "",
+              fechaCaducidad: idxFechaCad !== -1 ? cellStr(row[idxFechaCad]) : "",
+              cantidad: idxCantidad !== -1 ? cellStr(row[idxCantidad]) : "",
+              costoUnidad: idxCosto !== -1 ? cellStr(row[idxCosto]) : "",
+              proveedor: idxProveedor !== -1 ? cellStr(row[idxProveedor]) : "",
+              remision: idxRemision !== -1 ? cellStr(row[idxRemision]) : "",
             };
             break;
           }
@@ -552,7 +580,7 @@ Adicionalmente, describe en 'observaciones' brevemente qué tipo de documento es
 // 4. Autorizar o rechazar entrada en Google Sheets
 app.post("/api/authorize-entry", async (req, res) => {
   const authHeader = req.headers.authorization;
-  const { spreadsheetId, entryNo, estatus, notaRechazo, userEmail } = req.body;
+  const { spreadsheetId, entryNo, estatus, userEmail } = req.body;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ error: "No autorizado. Token de Google requerido." });
@@ -573,10 +601,10 @@ app.post("/api/authorize-entry", async (req, res) => {
     const sheets = google.sheets({ version: "v4", auth: oauth2Client });
     const sheetName = await getFirstSheetName(sheets, spreadsheetId);
 
-    // 1. Get current sheet values to locate the row index
+    // 1. Get current sheet values to locate the row index and headers dynamically
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: `${sheetName}!A1:N150`,
+      range: `${sheetName}!A1:ZZ1000`,
     });
 
     const rows = response.data.values;
@@ -584,10 +612,20 @@ app.post("/api/authorize-entry", async (req, res) => {
       return res.status(404).json({ error: "No se encontraron datos en la hoja." });
     }
 
+    const headers = rows[0].map(h => cellStr(h).trim());
+    const idxNo = headers.indexOf("No.");
+    const idxEstatus = headers.indexOf("Estatus");
+    const idxFechaAuth = headers.indexOf("Fecha Autorización");
+    const idxUserAuth = headers.indexOf("Usuario Autorización");
+
+    if (idxNo === -1 || idxEstatus === -1) {
+      return res.status(400).json({ error: "Estructura de hoja inválida. Falta columna 'No.' o 'Estatus'." });
+    }
+
     let rowIndex = -1;
     let existingRow: string[] = [];
     for (let i = 1; i < rows.length; i++) {
-      if (rows[i] && cellStr(rows[i][0]) === String(entryNo)) {
+      if (rows[i] && cellStr(rows[i][idxNo]) === String(entryNo)) {
         rowIndex = i + 1; // 1-indexed row number in sheets
         existingRow = rows[i];
         break;
@@ -598,65 +636,65 @@ app.post("/api/authorize-entry", async (req, res) => {
       return res.status(404).json({ error: `No se encontró el registro con No. ${entryNo}` });
     }
 
-    // Prepare updated row cells
-    // columns:
-    // A: No.
-    // B: Código FONSABI
-    // C: Descripción
-    // D: Estatus
-    // E: PDF
-    // F: Lote
-    // G: Fecha de Caducidad
-    // H: Cantidad
-    // I: Costo por Unidad
-    // J: Proveedor
-    // K: Remisión
-    // L: Fecha Autorización
-    // M: Usuario Autorización
-    // N: Nota de Rechazo
-
     const todayDate = new Date().toISOString().split("T")[0];
-
     const updatedRow = [...existingRow];
-    // Fill up to column N (index 13) if row is shorter
-    while (updatedRow.length < 14) {
+
+    // Ensure the array has enough cells to reach the columns we want to edit
+    const maxIdx = Math.max(idxEstatus, idxFechaAuth !== -1 ? idxFechaAuth : 0, idxUserAuth !== -1 ? idxUserAuth : 0);
+    while (updatedRow.length <= maxIdx) {
       updatedRow.push("");
     }
 
-    updatedRow[3] = estatus; // D: Estatus
-    updatedRow[11] = estatus === "Autorizado" ? todayDate : ""; // L: Fecha Autorización
-    updatedRow[12] = estatus === "Autorizado" ? (userEmail || "anonimo@fonsabi.gob.mx") : ""; // M: Usuario Autorización
-    updatedRow[13] = estatus === "Rechazado" ? (notaRechazo || "Rechazado por discrepancia de datos") : ""; // N: Nota de Rechazo
+    // Modify strictly the correct cells
+    updatedRow[idxEstatus] = estatus;
+    if (idxFechaAuth !== -1) {
+      updatedRow[idxFechaAuth] = estatus === "Autorizado" ? todayDate : "";
+    }
+    if (idxUserAuth !== -1) {
+      updatedRow[idxUserAuth] = estatus === "Autorizado" ? (userEmail || "sistema@fonsabi.gob.mx") : "";
+    }
 
-    // Write back
+    // Guardar abriendo el rango hasta la columna ZZ para no recortar la fila
     await sheets.spreadsheets.values.update({
       spreadsheetId,
-      range: `${sheetName}!A${rowIndex}:N${rowIndex}`,
+      range: `${sheetName}!A${rowIndex}:ZZ${rowIndex}`,
       valueInputOption: "USER_ENTERED",
       requestBody: {
         values: [updatedRow]
       }
     });
 
+    // Encontrar posiciones dinámicas para reconstruir el updatedEntry
+    const idxCodigo = headers.indexOf("Código FONSABI");
+    const idxDesc = headers.indexOf("Descripción");
+    const idxPdf = headers.indexOf("PDF");
+    const idxLote = headers.indexOf("Lote");
+    const idxFechaCad = headers.indexOf("Fecha de Caducidad");
+    const idxCantidad = headers.indexOf("Cantidad ") !== -1 ? headers.indexOf("Cantidad ") : headers.indexOf("Cantidad Unitaria");
+    const idxCosto = headers.indexOf("Costo por Unidad");
+    const idxProveedor = headers.indexOf("Proveedor");
+    const idxRemision = headers.indexOf("Remisión");
+
+    const updatedEntry = {
+      no: cellStr(updatedRow[idxNo]),
+      codigoFonsabi: idxCodigo !== -1 ? cellStr(updatedRow[idxCodigo]) : "",
+      descripcion: idxDesc !== -1 ? cellStr(updatedRow[idxDesc]) : "",
+      estatus: cellStr(updatedRow[idxEstatus]) as any,
+      pdf: idxPdf !== -1 ? cellStr(updatedRow[idxPdf]) : "",
+      lote: idxLote !== -1 ? cellStr(updatedRow[idxLote]) : "",
+      fechaCaducidad: idxFechaCad !== -1 ? cellStr(updatedRow[idxFechaCad]) : "",
+      cantidad: idxCantidad !== -1 ? cellStr(updatedRow[idxCantidad]) : "",
+      costoUnidad: idxCosto !== -1 ? cellStr(updatedRow[idxCosto]) : "",
+      proveedor: idxProveedor !== -1 ? cellStr(updatedRow[idxProveedor]) : "",
+      remision: idxRemision !== -1 ? cellStr(updatedRow[idxRemision]) : "",
+      fechaAutorizacion: idxFechaAuth !== -1 ? cellStr(updatedRow[idxFechaAuth]) : "",
+      usuarioAutorizacion: idxUserAuth !== -1 ? cellStr(updatedRow[idxUserAuth]) : "",
+    };
+
     return res.json({
       success: true,
       rowIndex,
-      updatedEntry: {
-        no: updatedRow[0],
-        codigoFonsabi: updatedRow[1],
-        descripcion: updatedRow[2],
-        estatus: updatedRow[3],
-        pdf: updatedRow[4],
-        lote: updatedRow[5],
-        fechaCaducidad: updatedRow[6],
-        cantidad: updatedRow[7],
-        costoUnidad: updatedRow[8],
-        proveedor: updatedRow[9],
-        remision: updatedRow[10],
-        fechaAutorizacion: updatedRow[11],
-        usuarioAutorizacion: updatedRow[12],
-        notaRechazo: updatedRow[13]
-      }
+      updatedEntry
     });
 
   } catch (error: any) {
