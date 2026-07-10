@@ -8,7 +8,8 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 // Add required Google Workspace scopes as configured in Google OAuth
 provider.addScope("https://www.googleapis.com/auth/spreadsheets");
-provider.addScope("https://www.googleapis.com/auth/drive.readonly");
+provider.addScope("https://www.googleapis.com/auth/drive.file");
+provider.addScope("https://www.googleapis.com/auth/documents");
 provider.addScope("https://www.googleapis.com/auth/userinfo.email");
 provider.addScope("https://www.googleapis.com/auth/userinfo.profile");
 

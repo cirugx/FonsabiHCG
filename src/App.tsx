@@ -426,14 +426,29 @@ export default function App() {
             </div>
 
             {errorMessage && (
-              <div className="p-4 bg-red-50 rounded-xl border border-red-100 text-xs text-red-700 flex items-center justify-between">
-                <span>{errorMessage}</span>
-                <button 
-                  onClick={() => fetchEntries()}
-                  className="font-bold underline cursor-pointer"
-                >
-                  Reintentar
-                </button>
+              <div className="p-4 bg-red-50 rounded-xl border border-red-100 text-xs text-red-700 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <span className="font-medium">{errorMessage}</span>
+                <div className="flex gap-2 shrink-0">
+                  {(errorMessage.toLowerCase().includes("credentials") || 
+                    errorMessage.toLowerCase().includes("oauth") || 
+                    errorMessage.toLowerCase().includes("token") || 
+                    errorMessage.toLowerCase().includes("autoriz") ||
+                    errorMessage.toLowerCase().includes("auth") ||
+                    errorMessage.toLowerCase().includes("permission")) && (
+                    <button 
+                      onClick={handleLogin}
+                      className="px-3 py-1.5 bg-blue-600 text-white rounded-lg font-bold shadow-xs hover:bg-blue-700 transition-colors cursor-pointer"
+                    >
+                      Re-autorizar con Google
+                    </button>
+                  )}
+                  <button 
+                    onClick={() => fetchEntries()}
+                    className="px-3 py-1.5 bg-slate-200 text-slate-800 rounded-lg font-bold hover:bg-slate-300 transition-colors cursor-pointer"
+                  >
+                    Reintentar
+                  </button>
+                </div>
               </div>
             )}
 

@@ -728,7 +728,8 @@ app.post("/api/verify-pdf", async (req, res) => {
 
   // Check if we should simulate (forceSimulate, missing API key, or standard dummy/sample PDF files)
   const geminiKey = process.env.GEMINI_API_KEY;
-  const isMock = forceSimulate || !geminiKey || pdfUrl?.includes("dummy") || pdfUrl?.includes("sample.pdf");
+  const finalPdfUrl = (pdfUrl || targetEntry?.pdf || "").trim();
+  const isMock = forceSimulate || !geminiKey || !finalPdfUrl || finalPdfUrl.includes("dummy") || finalPdfUrl.includes("sample.pdf");
 
   if (isMock) {
     console.log("Generando reporte de verificación simulado multi-documento para entrada No.", entryNo);
@@ -738,8 +739,8 @@ app.post("/api/verify-pdf", async (req, res) => {
 
   // REAL GEMINI MULTI-PHASE PIPELINE!
   try {
-    console.log(`Iniciando análisis real multi-fase para entrada No. ${entryNo} con PDF: ${pdfUrl}`);
-    const pdfBuffer = await downloadPDF(pdfUrl, token);
+    console.log(`Iniciando análisis real multi-fase para entrada No. ${entryNo} con PDF: ${finalPdfUrl}`);
+    const pdfBuffer = await downloadPDF(finalPdfUrl, token);
     const ai = new GoogleGenAI({ apiKey: geminiKey });
 
     const pdfPart = {
