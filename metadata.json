@@ -1,0 +1,6 @@
+{
+  "name": "Verificador de Entradas Médicas FONSABI",
+  "description": "Panel inteligente de control para la verificación y autorización de entradas de almacén médico (FONSABI) confrontando facturas/remisiones PDF usando Gemini IA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
