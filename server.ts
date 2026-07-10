@@ -478,172 +478,6 @@ function calculateAmarres(
   return amarres;
 }
 
-// Simulated High-Fidelity Report Generator for Mock/Fallback Testing
-function generateSimulatedReport(entryNo: string, targetEntry: any) {
-  const isEntry1 = String(entryNo) === "1";
-  const isEntry2 = String(entryNo) === "2";
-
-  const segmentation = [
-    { documentType: "Nota de Entrada (RB)", startPage: 1, endPage: 1, confidence: "Alta" },
-    { documentType: "Remisión Comercial", startPage: 2, endPage: 2, confidence: "Alta" },
-    { documentType: "Orden IMSS-BIENESTAR", startPage: 3, endPage: 3, confidence: "Alta" },
-    { documentType: "Certificado de Análisis (CoA)", startPage: 4, endPage: 4, confidence: "Alta" },
-    { documentType: "Registro Sanitario COFEPRIS", startPage: 5, endPage: 5, confidence: "Alta" }
-  ];
-
-  // Document 1: Nota de Entrada de Almacén (RB)
-  const doc1 = {
-    numeroNota: isEntry1 ? "NE-10294" : (isEntry2 ? "NE-10295" : "NE-10296"),
-    fechaRecepcion: "2026-07-09",
-    codigoFonsabi: targetEntry.codigoFonsabi || "FONS-3029",
-    descripcionArticulo: targetEntry.descripcion || "Insumo Médico",
-    cantidadRecibida: cleanNum(targetEntry.cantidad) || 500,
-    numeroLote: targetEntry.lote || "LOT-9988X",
-    fechaCaducidad: targetEntry.fechaCaducidad || "2028-12-31",
-    nombreProveedor: targetEntry.proveedor || "Distribuidora Médica del Norte",
-    numeroRemisionCapturado: targetEntry.remision || "REM-2026-001"
-  };
-
-  // Document 2: Remisión Comercial
-  // Introduce a lote discrepancy in entry 1
-  const doc2 = {
-    folioRemision: targetEntry.remision || "REM-2026-001",
-    fechaEmision: "2026-07-08",
-    nombreProveedor: targetEntry.proveedor || "Distribuidora Médica del Norte",
-    rfcProveedor: isEntry1 ? "DMN-880915-K45" : "MGS-951120-J12",
-    direccionProveedor: isEntry1 ? "Av. Constitución 400, Monterrey, NL" : "Calzada de Tlalpan 1200, CDMX",
-    lote: isEntry1 ? "LOT-9988M" : (targetEntry.lote || "LOT-1122Y"), // Mismatch for Entry 1
-    fechaCaducidad: targetEntry.fechaCaducidad || "2028-12-31",
-    cantidad: isEntry2 ? 80 : (cleanNum(targetEntry.cantidad) || 500), // Mismatch for Entry 2
-    costoUnidad: cleanNum(targetEntry.costoUnidad) || 2.50,
-    registroSanitarioTexto: isEntry1 
-      ? "Medicamento autorizado por COFEPRIS con registro sanitario 412M2018 SSA" 
-      : "Insumo médico con registro regulatorio SSA 085C2021"
-  };
-
-  // Document 3: Orden IMSS-BIENESTAR
-  const doc3 = {
-    folioOrden: isEntry1 ? "ORD-IMSS-2026-88" : "ORD-IMSS-2026-102",
-    fechaExpedicion: "2026-07-05",
-    claveArticulo: targetEntry.codigoFonsabi || "FONS-3029",
-    descripcionArticulo: targetEntry.descripcion || "Insumo Médico",
-    cantidadSolicitada: cleanNum(targetEntry.cantidad) || 500,
-    cantidadAutorizada: cleanNum(targetEntry.cantidad) || 500,
-    loteAsignado: targetEntry.lote || "LOT-9988X",
-    fechaCaducidad: targetEntry.fechaCaducidad || "2028-12-31"
-  };
-
-  // Document 4: Certificado de Análisis (CoA)
-  const doc4 = {
-    numeroCertificado: isEntry1 ? "COA-PAR-2026-553" : "COA-JER-2026-12",
-    nombreFabricante: isEntry1 ? "Laboratorios Monterrey S.A." : "Plásticos Médicos del Bajío",
-    nombreProducto: targetEntry.descripcion?.split("-")[0].trim() || "Insumo Médico",
-    numeroLoteAnalizado: targetEntry.lote || "LOT-9988X",
-    fechaFabricacionElaboracion: "2026-01-15",
-    fechaCaducidad: targetEntry.fechaCaducidad || "2028-12-31",
-    formaFarmaceutica: isEntry1 ? "Tabletas" : "Jeringa estéril",
-    resultadoAnalisis: "Cumple especificaciones"
-  };
-
-  // Document 5: Registro Sanitario COFEPRIS
-  const doc5 = {
-    numeroRegistroSanitario: isEntry1 ? "412M2018 SSA" : "085C2021",
-    titularRegistro: isEntry1 ? "Laboratorios Monterrey S.A." : "Importaciones Médicas S.A.",
-    nombreMedicamento: targetEntry.descripcion?.split("-")[0].trim() || "Insumo Médico",
-    formaFarmaceuticaAutorizada: isEntry1 ? "Tabletas" : "Jeringa estéril",
-    fechaVigencia: "2029-05-15",
-    estatusVigencia: "Vigente"
-  };
-
-  const amarres = calculateAmarres(doc1, doc2, doc3, doc4, doc5);
-
-  const cleanText = (s: string) => s.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
-  const provMatch = String(targetEntry.proveedor).toLowerCase().includes(doc2.nombreProveedor.toLowerCase()) || doc2.nombreProveedor.toLowerCase().includes(String(targetEntry.proveedor).toLowerCase());
-  const remisionMatch = cleanText(targetEntry.remision) === cleanText(doc2.folioRemision);
-
-  const comparisons = {
-    lote: {
-      sheetValue: targetEntry.lote,
-      pdfValue: doc2.lote,
-      isMatch: targetEntry.lote.toLowerCase() === doc2.lote.toLowerCase(),
-      field: "lote",
-      label: "Número de Lote"
-    },
-    fechaCaducidad: {
-      sheetValue: targetEntry.fechaCaducidad,
-      pdfValue: doc2.fechaCaducidad,
-      isMatch: targetEntry.fechaCaducidad === doc2.fechaCaducidad,
-      field: "fechaCaducidad",
-      label: "Fecha de Caducidad"
-    },
-    cantidad: {
-      sheetValue: targetEntry.cantidad,
-      pdfValue: String(doc2.cantidad),
-      isMatch: Number(targetEntry.cantidad) === Number(doc2.cantidad),
-      field: "cantidad",
-      label: "Cantidad (Unidades)"
-    },
-    costoUnidad: {
-      sheetValue: targetEntry.costoUnidad,
-      pdfValue: String(doc2.costoUnidad),
-      isMatch: Math.abs(Number(targetEntry.costoUnidad) - Number(doc2.costoUnidad)) < 0.01,
-      field: "costoUnidad",
-      label: "Costo Unitario"
-    },
-    proveedor: {
-      sheetValue: targetEntry.proveedor,
-      pdfValue: doc2.nombreProveedor,
-      isMatch: provMatch,
-      field: "proveedor",
-      label: "Proveedor"
-    },
-    remision: {
-      sheetValue: targetEntry.remision,
-      pdfValue: doc2.folioRemision,
-      isMatch: remisionMatch,
-      field: "remision",
-      label: "Folio de Remisión / Factura"
-    }
-  };
-
-  const matchedCount = Object.values(comparisons).filter((c: any) => c.isMatch).length;
-  const passedAmarres = amarres.filter(a => a.isMatch).length;
-  const matchPercentage = Math.round(((matchedCount + passedAmarres) / (6 + amarres.length)) * 100);
-
-  let observaciones = "ANÁLISIS COMPLETO DEL EXPEDIENTE (MODO SIMULADO): ";
-  if (matchPercentage === 100) {
-    observaciones += "Todas las piezas documentales del expediente (RB, Remisión Comercial, Orden IMSS-BIENESTAR, Certificado CoA y Registro COFEPRIS) cruzaron de forma exitosa y coinciden con la información del sistema.";
-  } else {
-    observaciones += `Se identificaron discrepancias críticas en el expediente. `;
-    const failedAmarres = amarres.filter(a => !a.isMatch);
-    if (failedAmarres.length > 0) {
-      observaciones += `Alertas de Amarre Cruzado: ${failedAmarres.map(a => a.label).join(", ")}. `;
-    }
-    if (!comparisons.lote.isMatch) {
-      observaciones += `El lote en remisión física (${comparisons.lote.pdfValue}) no coincide con el del sistema (${comparisons.lote.sheetValue}). `;
-    }
-    if (!comparisons.cantidad.isMatch) {
-      observaciones += `La cantidad física en la remisión (${comparisons.cantidad.pdfValue}) difiere del sistema (${comparisons.cantidad.sheetValue}). `;
-    }
-  }
-
-  return {
-    entryId: String(entryNo),
-    matchPercentage,
-    comparisons,
-    observaciones,
-    extractedRaw: doc2,
-    isMock: true,
-    segmentation,
-    doc1,
-    doc2,
-    doc3,
-    doc4,
-    doc5,
-    amarres
-  };
-}
-
 // 3. Verificar PDF con Gemini (Procesamiento de Expediente Multi-Documento)
 app.post("/api/verify-pdf", async (req, res) => {
   const authHeader = req.headers.authorization;
@@ -726,15 +560,19 @@ app.post("/api/verify-pdf", async (req, res) => {
     };
   }
 
-  // Check if we should simulate (forceSimulate, missing API key, or standard dummy/sample PDF files)
+  // Real-only verification logic
   const geminiKey = process.env.GEMINI_API_KEY;
-  const finalPdfUrl = (pdfUrl || targetEntry?.pdf || "").trim();
-  const isMock = forceSimulate || !geminiKey || !finalPdfUrl || finalPdfUrl.includes("dummy") || finalPdfUrl.includes("sample.pdf");
+  if (!geminiKey) {
+    return res.status(400).json({ 
+      error: "La clave de la API de Gemini (GEMINI_API_KEY) no está configurada. Por favor, ingrésala en la sección de Secretos." 
+    });
+  }
 
-  if (isMock) {
-    console.log("Generando reporte de verificación simulado multi-documento para entrada No.", entryNo);
-    const mockReport = generateSimulatedReport(String(entryNo), targetEntry);
-    return res.json({ report: mockReport });
+  const finalPdfUrl = (pdfUrl || targetEntry?.pdf || "").trim();
+  if (!finalPdfUrl) {
+    return res.status(400).json({
+      error: "No se proporcionó una URL de PDF válida para analizar."
+    });
   }
 
   // REAL GEMINI MULTI-PHASE PIPELINE!

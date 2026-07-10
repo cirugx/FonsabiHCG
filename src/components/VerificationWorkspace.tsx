@@ -48,7 +48,7 @@ export default function VerificationWorkspace({
   const [viewMode, setViewMode] = useState<"native" | "invoice_mock">("invoice_mock"); // Default to mock visual representation to bypass iframe X-Frame blockers!
 
   // Fetch or run analysis
-  const runAnalysis = async (forceSimulate: boolean = false) => {
+  const runAnalysis = async () => {
     setLoadingAnalysis(true);
     setErrorMsg("");
     setReport(null);
@@ -62,8 +62,7 @@ export default function VerificationWorkspace({
         body: JSON.stringify({
           entryNo: entry.no,
           pdfUrl: entry.pdf,
-          spreadsheetId,
-          forceSimulate
+          spreadsheetId
         }),
       });
 
@@ -75,7 +74,7 @@ export default function VerificationWorkspace({
       setReport(data.report);
     } catch (err: any) {
       console.error("Analysis Error:", err);
-      setErrorMsg(err.message || "Error al analizar con Gemini API. Se puede forzar una simulación para probar.");
+      setErrorMsg(err.message || "Error al analizar con Gemini API.");
     } finally {
       setLoadingAnalysis(false);
     }
@@ -133,18 +132,12 @@ export default function VerificationWorkspace({
 
         <div className="flex items-center gap-2.5">
           <button
-            onClick={() => runAnalysis(true)}
-            className="text-[10px] font-bold text-amber-700 hover:text-amber-800 bg-amber-500/10 hover:bg-amber-500/20 px-3 py-2 rounded-xl transition-all border border-amber-500/25 cursor-pointer shadow-2xs"
-          >
-            Forzar Análisis Simulado
-          </button>
-          <button
-            onClick={() => runAnalysis(false)}
+            onClick={() => runAnalysis()}
             disabled={loadingAnalysis}
             className="flex items-center gap-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-bold disabled:opacity-50 transition-all cursor-pointer shadow-md shadow-blue-200"
           >
             <Sparkles size={13} className={loadingAnalysis ? "animate-spin" : ""} />
-            Reanalizar
+            {loadingAnalysis ? "Analizando..." : "Reanalizar con IA"}
           </button>
         </div>
       </div>
@@ -281,12 +274,8 @@ export default function VerificationWorkspace({
               <Sparkles size={14} className="text-blue-500 animate-pulse" /> Cotejo Inteligente de IA (Gemini 2.5 Flash)
             </span>
             {report && (
-              <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-lg border ${
-                report.isMock 
-                  ? "bg-amber-500/10 text-amber-700 border-amber-500/20" 
-                  : "bg-blue-500/10 text-blue-700 border-blue-500/20"
-              }`}>
-                {report.isMock ? "Modo Simulación" : "IA En Vivo"}
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-lg border bg-blue-500/10 text-blue-700 border-blue-500/20">
+                IA En Vivo
               </span>
             )}
           </div>
@@ -324,16 +313,10 @@ export default function VerificationWorkspace({
                 </div>
                 <div className="pt-2 border-t border-red-200 flex gap-2">
                   <button
-                    onClick={() => runAnalysis(true)}
-                    className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold shadow-xs"
+                    onClick={() => runAnalysis()}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs"
                   >
-                    Usar Simulación de Respaldo
-                  </button>
-                  <button
-                    onClick={() => runAnalysis(false)}
-                    className="px-3 py-1.5 bg-white hover:bg-slate-100 border border-red-200 text-red-700 rounded-lg text-xs font-semibold"
-                  >
-                    Reintentar Conexión Real
+                    Reintentar Cotejo Real
                   </button>
                 </div>
               </div>

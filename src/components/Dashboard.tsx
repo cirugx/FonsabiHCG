@@ -24,7 +24,13 @@ import {
   FileText,
   SlidersHorizontal,
   Activity,
-  Check
+  Check,
+  ChevronRight,
+  TrendingUp,
+  Percent,
+  Layers,
+  Inbox,
+  Sparkles
 } from "lucide-react";
 
 interface DashboardProps {
@@ -53,7 +59,7 @@ export default function Dashboard({
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("Todos");
 
-  // Selection states
+  // Selection states for consolidated Oficio
   const [selectedEntries, setSelectedEntries] = useState<FonsabiEntry[]>([]);
   const [isGeneratingOficio, setIsGeneratingOficio] = useState(false);
   const [oficioError, setOficioError] = useState("");
@@ -94,7 +100,7 @@ export default function Dashboard({
       if (data.documentUrl) {
         window.open(data.documentUrl, "_blank", "noopener,noreferrer");
       } else {
-        alert("Oficio generado con éxito, pero no se recibió la dirección de acceso.");
+        alert("Oficio de Entrada generado con éxito, pero no se recibió la dirección de acceso en Google Docs.");
       }
     } catch (err: any) {
       console.error("Error generating Oficio:", err);
@@ -164,49 +170,49 @@ export default function Dashboard({
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto px-1 sm:px-0">
+    <div className="space-y-8 max-w-7xl mx-auto px-1 sm:px-0 pb-16">
       
-      {/* Top Governmental Institutional Accent & Watermark */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-slate-950 via-emerald-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-emerald-800/20">
-        <div className="absolute right-0 top-0 h-64 w-64 bg-radial-gradient from-emerald-500/10 to-transparent rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-        <div className="absolute left-1/4 bottom-0 h-48 w-48 bg-radial-gradient from-amber-500/5 to-transparent rounded-full blur-2xl pointer-events-none" />
+      {/* 🏛️ Top Governmental Institutional Hero Header */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#0c1b15] via-[#102a1f] to-[#0d1d17] text-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-emerald-900/35">
+        <div className="absolute right-0 top-0 h-64 w-64 bg-radial-gradient from-emerald-500/15 to-transparent rounded-full blur-3xl pointer-events-none -mr-16 -mt-16" />
+        <div className="absolute left-1/4 bottom-0 h-48 w-48 bg-radial-gradient from-amber-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
         
-        {/* Fine Decorative Grid Line */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293708_1px,transparent_1px),linear-gradient(to_bottom,#1f293708_1px,transparent_1px)] bg-[size:24px_24px] opacity-10" />
+        {/* Subtle Ornamental Grid Line overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:32px_32px] opacity-25" />
 
-        <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6 z-10">
-          <div className="space-y-3">
+        <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 z-10">
+          <div className="space-y-3.5">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[9px] font-bold text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-md tracking-widest uppercase">
-                IMSS-BIENESTAR
+              <span className="text-[10px] font-black tracking-widest text-[#d4af37] bg-amber-500/10 border border-[#d4af37]/35 px-3 py-1 rounded-md uppercase">
+                GOBIERNO DE MÉXICO
               </span>
-              <span className="text-[9px] font-bold text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-2.5 py-0.5 rounded-md tracking-widest uppercase">
-                COTEJO SANITARIO FEDERAL
+              <span className="text-[10px] font-black tracking-widest text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-md uppercase">
+                IMSS-BIENESTAR • FONSABI
               </span>
             </div>
             
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight font-sans">
-              Sistema de Validación FONSABI
+            <h1 className="text-2xl sm:text-3.5xl font-extrabold tracking-tight text-white leading-tight font-sans">
+              Sistema Federal de Cotejo Documental
             </h1>
             
-            <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
-              Módulo oficial de verificación documental inteligente asistido por IA para insumos médicos del bienestar.
-              Verifique actas, remisiones comerciales, órdenes de entrega y certificados de análisis con rigor gubernamental.
+            <p className="text-xs sm:text-[13px] text-slate-300 max-w-3xl leading-relaxed">
+              Consola institucional de verificación de remisiones e insumos médicos con inteligencia asistida. 
+              Garantice la trazabilidad de los medicamentos autorizados por FONSABI, verifique certificados de lote y genere actas oficiales integradas con Google Docs de forma ágil y auditable.
             </p>
           </div>
 
           {spreadsheetId && (
-            <div className="shrink-0 bg-white/5 backdrop-blur-md border border-white/10 px-4 py-3.5 rounded-2xl text-[11px] text-slate-300 max-w-sm shadow-xl">
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-emerald-500/20 rounded-lg text-emerald-400 shrink-0 border border-emerald-500/20 mt-0.5">
-                  <Database size={14} />
+            <div className="shrink-0 bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl text-[11px] text-slate-200 max-w-sm shadow-xl hover:bg-white/15 transition-all duration-300">
+              <div className="flex items-start gap-3.5">
+                <div className="p-2.5 bg-emerald-500/20 rounded-xl text-emerald-300 shrink-0 border border-emerald-400/20 mt-0.5 shadow-inner">
+                  <Database size={16} />
                 </div>
-                <div className="space-y-1 truncate">
-                  <span className="block text-[9px] uppercase font-bold tracking-wider text-slate-400">Repositorio del Sistema (Sheets)</span>
-                  <span className="font-mono text-white truncate block max-w-[200px]">{spreadsheetId}</span>
-                  <div className="flex items-center gap-1.5 mt-1 text-[9px] text-emerald-400 font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Sincronización Federal Activa
+                <div className="space-y-1.5 truncate">
+                  <span className="block text-[9px] uppercase font-bold tracking-wider text-emerald-400">Canal de Sincronización Federal</span>
+                  <span className="font-mono text-white text-xs truncate block max-w-[220px] bg-black/25 px-2 py-1 rounded border border-white/5">{spreadsheetId}</span>
+                  <div className="flex items-center gap-2 mt-1.5 text-[10px] text-emerald-400 font-extrabold">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    Auditoría Activa del Repositorio
                   </div>
                 </div>
               </div>
@@ -215,123 +221,152 @@ export default function Dashboard({
         </div>
       </div>
 
-      {/* Metrics Section: Precision-crafted Glassmorphic Bento Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      {/* 📊 Premium Glassmorphism Metrics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        {/* Metric 1: Pending */}
-        <div className="relative group overflow-hidden rounded-2xl bg-white/70 backdrop-blur-md border border-slate-200/50 p-5 shadow-lg shadow-slate-100/40 hover:shadow-xl hover:border-slate-300 transition-all duration-300">
-          <div className="absolute right-0 top-0 h-24 w-24 bg-gradient-to-bl from-amber-500/5 to-transparent rounded-bl-full pointer-events-none" />
-          <div className="flex items-start justify-between">
-            <div className="space-y-2">
-              <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Pendientes de Cotejar</p>
-              <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">{metrics.pending}</h3>
-              <div className="inline-flex items-center gap-1.5 text-[9px] text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/50">
+        {/* Metric Box: Pendientes de Cotejar */}
+        <div className="relative group overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-6 shadow-xl hover:shadow-2xl hover:border-white/30 hover:bg-white/15 transition-all duration-300">
+          {/* Subtle colored glow background */}
+          <div className="absolute right-0 top-0 h-32 w-32 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full pointer-events-none" />
+          
+          <div className="flex items-start justify-between relative z-10">
+            <div className="space-y-3">
+              <span className="text-[10px] uppercase font-black tracking-wider text-slate-400 block">Insumos Pendientes</span>
+              <div className="flex items-baseline gap-2">
+                <h3 className="text-4xl font-extrabold text-slate-900 tracking-tight font-sans">{metrics.pending}</h3>
+                <span className="text-xs text-slate-500 font-medium">partidas</span>
+              </div>
+              
+              <div className="inline-flex items-center gap-2 text-[10px] text-amber-800 font-bold bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20">
                 <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse" />
                 Requiere validación IA
               </div>
             </div>
-            <div className="p-3 bg-amber-500/10 rounded-xl text-amber-700 border border-amber-200/30 group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
-              <ClipboardList size={18} />
+            
+            <div className="p-3.5 bg-amber-500/15 rounded-2xl text-amber-700 border border-amber-500/20 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 shadow-sm">
+              <Clock size={20} className="animate-spin-slow" />
             </div>
+          </div>
+          
+          <div className="mt-4 pt-4 border-t border-slate-200/50 text-[11px] text-slate-500 flex items-center justify-between">
+            <span>En espera de cotejo con PDF</span>
+            <span className="font-bold font-mono text-slate-700">{Math.round((metrics.pending / (metrics.total || 1)) * 100)}% del total</span>
           </div>
         </div>
 
-        {/* Metric 2: Approved */}
-        <div className="relative group overflow-hidden rounded-2xl bg-white/70 backdrop-blur-md border border-slate-200/50 p-5 shadow-lg shadow-slate-100/40 hover:shadow-xl hover:border-slate-300 transition-all duration-300">
-          <div className="absolute right-0 top-0 h-24 w-24 bg-gradient-to-bl from-emerald-500/5 to-transparent rounded-bl-full pointer-events-none" />
-          <div className="flex items-start justify-between">
-            <div className="space-y-2">
-              <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Autorizados</p>
-              <h3 className="text-3xl font-extrabold text-emerald-800 tracking-tight">{metrics.approved}</h3>
-              <div className="inline-flex items-center gap-1.5 text-[9px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/50">
-                <CheckCircle2 size={10} className="text-emerald-600" />
-                Ingresos Aprobados
+        {/* Metric Box: Aprobados */}
+        <div className="relative group overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-6 shadow-xl hover:shadow-2xl hover:border-white/30 hover:bg-white/15 transition-all duration-300">
+          <div className="absolute right-0 top-0 h-32 w-32 bg-gradient-to-bl from-emerald-500/10 to-transparent rounded-bl-full pointer-events-none" />
+          
+          <div className="flex items-start justify-between relative z-10">
+            <div className="space-y-3">
+              <span className="text-[10px] uppercase font-black tracking-wider text-slate-400 block">Autorizados Federales</span>
+              <div className="flex items-baseline gap-2">
+                <h3 className="text-4xl font-extrabold text-emerald-800 tracking-tight font-sans">{metrics.approved}</h3>
+                <span className="text-xs text-slate-500 font-medium">partidas</span>
+              </div>
+              
+              <div className="inline-flex items-center gap-1.5 text-[10px] text-emerald-800 font-bold bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                <CheckCircle2 size={12} className="text-emerald-600" />
+                Validación Correcta
               </div>
             </div>
-            <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-700 border border-emerald-200/30 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
-              <CheckCircle2 size={18} />
+            
+            <div className="p-3.5 bg-emerald-500/15 rounded-2xl text-emerald-700 border border-emerald-500/20 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300 shadow-sm">
+              <CheckCircle2 size={20} />
             </div>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-slate-200/50 text-[11px] text-slate-500 flex items-center justify-between">
+            <span>Tasa de aprobación del inventario</span>
+            <span className="font-bold text-emerald-700 flex items-center gap-1">
+              <TrendingUp size={12} />
+              {metrics.approvalRate}%
+            </span>
           </div>
         </div>
 
-        {/* Metric 3: Rejected */}
-        <div className="relative group overflow-hidden rounded-2xl bg-white/70 backdrop-blur-md border border-slate-200/50 p-5 shadow-lg shadow-slate-100/40 hover:shadow-xl hover:border-slate-300 transition-all duration-300">
-          <div className="absolute right-0 top-0 h-24 w-24 bg-gradient-to-bl from-rose-500/5 to-transparent rounded-bl-full pointer-events-none" />
-          <div className="flex items-start justify-between">
-            <div className="space-y-2">
-              <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Rechazados</p>
-              <h3 className="text-3xl font-extrabold text-rose-800 tracking-tight">{metrics.rejected}</h3>
-              <div className="inline-flex items-center gap-1.5 text-[9px] text-rose-700 font-bold bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200/50">
-                <XCircle size={10} className="text-rose-600" />
-                Desviaciones Detectadas
+        {/* Metric Box: Rechazados */}
+        <div className="relative group overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-6 shadow-xl hover:shadow-2xl hover:border-white/30 hover:bg-white/15 transition-all duration-300">
+          <div className="absolute right-0 top-0 h-32 w-32 bg-gradient-to-bl from-rose-500/10 to-transparent rounded-bl-full pointer-events-none" />
+          
+          <div className="flex items-start justify-between relative z-10">
+            <div className="space-y-3">
+              <span className="text-[10px] uppercase font-black tracking-wider text-slate-400 block">Desviaciones Detectadas</span>
+              <div className="flex items-baseline gap-2">
+                <h3 className="text-4xl font-extrabold text-rose-800 tracking-tight font-sans">{metrics.rejected}</h3>
+                <span className="text-xs text-slate-500 font-medium">partidas</span>
+              </div>
+              
+              <div className="inline-flex items-center gap-1.5 text-[10px] text-rose-800 font-bold bg-rose-500/10 px-2.5 py-1 rounded-lg border border-rose-500/20">
+                <ShieldAlert size={12} className="text-rose-600" />
+                Cotejo no aprobado
               </div>
             </div>
-            <div className="p-3 bg-rose-500/10 rounded-xl text-rose-700 border border-rose-200/30 group-hover:bg-rose-600 group-hover:text-white transition-all duration-300">
-              <XCircle size={18} />
+            
+            <div className="p-3.5 bg-rose-500/15 rounded-2xl text-rose-700 border border-rose-500/20 group-hover:bg-rose-600 group-hover:text-white transition-all duration-300 shadow-sm">
+              <XCircle size={20} />
             </div>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-slate-200/50 text-[11px] text-slate-500 flex items-center justify-between">
+            <span>Inconsistencias críticas</span>
+            <span className="font-bold text-rose-700 font-mono">{Math.round((metrics.rejected / (metrics.total || 1)) * 100)}% de rechazo</span>
           </div>
         </div>
 
-        {/* Metric 4: Tasa de Autorización */}
-        <div className="relative group overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 p-5 shadow-lg shadow-slate-950/20 text-white">
-          <div className="absolute right-0 top-0 h-24 w-24 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-bl-full pointer-events-none" />
-          <div className="flex items-start justify-between">
-            <div className="space-y-2">
-              <p className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Tasa de Aprobación</p>
-              <h3 className="text-3xl font-extrabold text-white tracking-tight">{metrics.approvalRate}%</h3>
-              <div className="inline-flex items-center gap-1.5 text-[9px] text-amber-500 font-bold bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
-                <Activity size={10} className="text-amber-500" />
-                Rendimiento de Insumos
-              </div>
-            </div>
-            <div className="p-3 bg-white/5 rounded-xl text-amber-400 border border-white/10">
-              <Clock size={18} />
-            </div>
-          </div>
-        </div>
       </div>
 
-      {/* Control Panel: Advanced Search & Filtering - Elegant Glass Banner */}
-      <div className="bg-white/75 backdrop-blur-md border border-slate-200/60 rounded-2xl p-5 shadow-lg shadow-slate-100/50 flex flex-col xl:flex-row gap-5 items-center justify-between">
+      {/* 🔍 Control Center: Search, Filters & Quick Actions */}
+      <div className="bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl p-5 shadow-xl flex flex-col xl:flex-row gap-5 items-center justify-between">
         
-        {/* Search Input */}
-        <div className="relative w-full xl:w-96">
-          <Search className="absolute left-3.5 top-3.5 text-slate-400" size={14} />
+        {/* Modern Search bar */}
+        <div className="relative w-full xl:w-[420px]">
+          <Search className="absolute left-3.5 top-3.5 text-slate-400" size={15} />
           <input
             type="text"
-            placeholder="Buscar por medicamento, lote, clave o proveedor..."
+            placeholder="Buscar medicamento, lote, clave o proveedor..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-4 py-3 w-full rounded-xl border border-slate-200 bg-slate-50/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-700 text-xs transition-all placeholder:text-slate-400 text-slate-800 shadow-2xs font-medium"
+            className="pl-11 pr-4 py-3 w-full rounded-xl border border-slate-200 bg-white/75 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-700 text-xs transition-all placeholder:text-slate-400 text-slate-800 shadow-sm font-medium"
           />
+          {searchTerm && (
+            <button 
+              onClick={() => setSearchTerm("")} 
+              className="absolute right-3 top-3 text-slate-400 hover:text-slate-700"
+            >
+              <X size={15} />
+            </button>
+          )}
         </div>
 
         {/* Filters and Actions */}
         <div className="flex flex-col sm:flex-row flex-wrap items-center gap-4 w-full xl:w-auto justify-end">
           
-          {/* Status Pills */}
-          <div className="flex bg-slate-100/80 p-1 rounded-xl border border-slate-200/40 w-full sm:w-auto overflow-x-auto">
+          {/* Status Selection Filters styled with luxury glass */}
+          <div className="flex bg-slate-900/10 p-1 rounded-xl border border-white/20 w-full sm:w-auto overflow-x-auto">
             {["Todos", "Sin autorizar", "Autorizado", "Rechazado"].map((status) => (
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
-                className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-[11px] font-black tracking-wide uppercase transition-all duration-150 cursor-pointer whitespace-nowrap ${
                   statusFilter === status
-                    ? "bg-white text-emerald-800 shadow-xs border border-slate-200/50 font-extrabold"
-                    : "text-slate-500 hover:text-slate-800"
+                    ? "bg-white text-emerald-900 shadow-md font-extrabold border border-slate-200/55"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
-                {status}
+                {status === "Sin autorizar" ? "Pendientes" : status}
               </button>
             ))}
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto shrink-0">
-            {/* Refresh Button */}
+            
+            {/* Refresh Button with Glassmorphism */}
             <button
               onClick={onRefresh}
               disabled={isLoading || !spreadsheetId}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition-all cursor-pointer shadow-2xs active:scale-95"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-white/20 bg-white/40 hover:bg-white/60 text-xs font-black tracking-wide uppercase text-slate-800 disabled:opacity-50 transition-all cursor-pointer shadow-sm active:scale-95"
             >
               <RefreshCw size={13} className={isLoading ? "animate-spin" : ""} />
               Actualizar
@@ -342,58 +377,62 @@ export default function Dashboard({
                 href={`https://docs.google.com/spreadsheets/d/${spreadsheetId}`}
                 target="_blank"
                 referrerPolicy="no-referrer"
-                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-emerald-200 bg-emerald-50/60 text-xs font-bold text-emerald-800 hover:bg-emerald-100/60 transition-all shadow-2xs whitespace-nowrap active:scale-95"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-emerald-300/30 bg-emerald-850 text-white hover:bg-emerald-900 transition-all shadow-md text-xs font-black tracking-wide uppercase whitespace-nowrap active:scale-95"
               >
-                <ExternalLink size={13} />
-                Abrir en Sheets
+                <FileSpreadsheet size={13} />
+                Ver Hoja
               </a>
             )}
           </div>
         </div>
       </div>
 
-      {/* Floating Consolidated Oficio Banner (Glassmorphic Gold/Teal) */}
+      {/* 📄 Consolidated Oficio Document Generator floating banner */}
       <AnimatePresence>
         {selectedEntries.length > 0 && (
           <motion.div 
             initial={{ opacity: 0, y: 15, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.98 }}
-            className="bg-gradient-to-r from-slate-900 to-emerald-950 text-white p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-5 shadow-2xl border border-emerald-700/30"
+            className="bg-gradient-to-r from-[#0c1b15] to-[#102d20] text-white p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-5 shadow-2xl border border-emerald-700/30 relative overflow-hidden"
           >
+            {/* Ambient gold corner accent */}
+            <div className="absolute right-0 top-0 h-16 w-16 bg-[#d4af37]/10 rounded-bl-full pointer-events-none" />
+
             <div className="flex items-center gap-4">
-              <span className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-black font-mono border border-amber-500/30 shadow-lg shadow-amber-500/10">
+              <span className="w-12 h-12 rounded-xl bg-[#d4af37]/25 text-[#f1c40f] flex items-center justify-center text-sm font-black font-mono border border-[#d4af37]/45 shadow-lg shadow-amber-500/10">
                 {selectedEntries.length}
               </span>
               <div className="space-y-1">
-                <p className="text-xs font-bold tracking-wide uppercase text-amber-500">Consolidación de Acta Oficial</p>
-                <p className="text-[11px] text-slate-300">
-                  Se han seleccionado <span className="font-bold text-emerald-400">{selectedEntries.length} partidas autorizadas</span>. ¿Desea emitir el Acta de Entrada formal en Google Docs?
+                <p className="text-xs font-black tracking-widest uppercase text-[#d4af37]">Consolidación de Oficio de Almacén</p>
+                <p className="text-[11px] sm:text-xs text-slate-300">
+                  Ha seleccionado <span className="font-extrabold text-emerald-400">{selectedEntries.length} partidas de insumos médicos autorizadas</span>. ¿Desea consolidar y emitir el Acta de Entrada Oficial de Bienestar?
                 </p>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
+            
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0 relative z-10">
               <button
                 onClick={() => setSelectedEntries([])}
-                className="w-full sm:w-auto px-4 py-2.5 text-xs font-bold text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all cursor-pointer border border-transparent hover:border-white/10"
+                className="w-full sm:w-auto px-4 py-2.5 text-xs font-black uppercase tracking-wider text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all cursor-pointer border border-transparent hover:border-white/10"
               >
-                Cancelar Selección
+                Cancelar
               </button>
               <button
                 onClick={handleGenerateOficio}
                 disabled={selectedEntries.length < 2 || isGeneratingOficio}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-slate-950 hover:text-black text-xs font-extrabold rounded-xl transition-all cursor-pointer shadow-lg shadow-amber-500/25 active:scale-95"
-                title={selectedEntries.length < 2 ? "Seleccione al menos 2 registros autorizados para consolidar" : "Generar acta en Google Docs"}
+                className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-2.5 bg-gradient-to-r from-amber-500 to-[#d4af37] hover:from-amber-600 hover:to-[#c59b27] disabled:opacity-50 text-slate-950 font-black tracking-widest uppercase text-xs rounded-xl transition-all cursor-pointer shadow-lg shadow-amber-500/20 active:scale-95"
+                title={selectedEntries.length < 2 ? "Seleccione al menos 2 registros autorizados para consolidar" : "Generar oficio en Google Docs"}
               >
                 {isGeneratingOficio ? (
                   <>
                     <RefreshCw className="animate-spin" size={13} />
-                    Generando Acta...
+                    Generando...
                   </>
                 ) : (
                   <>
-                    <ExternalLink size={13} />
-                    Generar Oficio de Entrada ({selectedEntries.length})
+                    <FileText size={14} />
+                    Generar Acta ({selectedEntries.length})
                   </>
                 )}
               </button>
@@ -403,76 +442,76 @@ export default function Dashboard({
       </AnimatePresence>
 
       {oficioError && (
-        <div className="p-4 bg-rose-50 text-xs text-rose-800 font-bold rounded-xl border border-rose-200/60 flex justify-between items-center shadow-md">
-          <div className="flex items-center gap-2">
-            <XCircle size={15} className="text-rose-500" />
+        <div className="p-4.5 bg-rose-50 text-xs text-rose-800 font-bold rounded-xl border border-rose-200/60 flex justify-between items-center shadow-lg">
+          <div className="flex items-center gap-2.5">
+            <XCircle size={16} className="text-rose-500 shrink-0" />
             <span>{oficioError}</span>
           </div>
           <button onClick={() => setOficioError("")} className="text-rose-400 hover:text-rose-700 font-bold p-1">
-            <X size={14} />
+            <X size={15} />
           </button>
         </div>
       )}
 
-      {/* Main Container Card (Glassmorphic Content Host) */}
-      <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-slate-200/50 shadow-xl overflow-hidden">
+      {/* 🏢 Main Table Container styled with frosted glassmorphism */}
+      <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl overflow-hidden">
         
         {isLoading ? (
-          <div className="py-24 flex flex-col items-center justify-center space-y-4">
+          <div className="py-28 flex flex-col items-center justify-center space-y-4">
             <div className="relative flex items-center justify-center">
-              <div className="w-12 h-12 rounded-full border-4 border-slate-100 border-t-emerald-700 animate-spin" />
-              <Database className="absolute text-emerald-700" size={16} />
+              <div className="w-14 h-14 rounded-full border-4 border-slate-200 border-t-emerald-800 animate-spin" />
+              <Database className="absolute text-emerald-800" size={18} />
             </div>
             <div className="text-center space-y-1">
-              <p className="text-xs font-bold text-slate-800 tracking-widest uppercase">Conectando con Registro Central...</p>
-              <p className="text-[10px] text-slate-400 font-medium">Extrayendo datos de la Dirección General en tiempo real</p>
+              <p className="text-xs font-black text-slate-800 tracking-widest uppercase">Consultando Padrón FONSABI...</p>
+              <p className="text-[10px] text-slate-500 font-medium">Sincronizando estado y firmas de auditoría gubernamental</p>
             </div>
           </div>
         ) : entries.length === 0 ? (
-          <div className="p-16 text-center max-w-xl mx-auto flex flex-col items-center space-y-6">
-            <div className="p-4 bg-emerald-500/10 rounded-2xl text-emerald-800 border border-emerald-500/20 shadow-inner">
-              <Database size={32} />
+          <div className="p-20 text-center max-w-xl mx-auto flex flex-col items-center space-y-6">
+            <div className="p-4.5 bg-emerald-500/10 rounded-2xl text-emerald-800 border border-emerald-500/20 shadow-inner">
+              <Inbox size={36} />
             </div>
             <div className="space-y-2">
-              <h4 className="text-base font-extrabold text-slate-950">Sin Datos en Repositorio de Control</h4>
+              <h4 className="text-base font-extrabold text-slate-900">Repositorio del Sistema Vacío</h4>
               <p className="text-xs text-slate-500 leading-relaxed">
-                No se han encontrado registros de insumos médicos en la hoja configurada. Inicialice una base de datos muestra para validar el cotejo inteligente.
+                No se han encontrado registros de insumos médicos en la hoja del sistema actual. Inicialice los datos de demostración de IMSS-BIENESTAR para simular la auditoría federal.
               </p>
             </div>
             <button
               onClick={onInitializeMock}
               disabled={isInitializing}
-              className="px-5 py-3 bg-emerald-800 hover:bg-emerald-900 disabled:opacity-50 text-white rounded-xl text-xs font-extrabold shadow-lg shadow-emerald-800/10 flex items-center gap-2 transition-all cursor-pointer active:scale-95"
+              className="px-6 py-3 bg-emerald-800 hover:bg-emerald-900 disabled:opacity-50 text-white rounded-xl text-xs font-extrabold shadow-lg shadow-emerald-800/15 flex items-center gap-2.5 transition-all cursor-pointer active:scale-95"
             >
-              <FileSpreadsheet size={15} />
-              {isInitializing ? "Inicializando plantilla..." : "Inicializar Hoja FONSABI de Ejemplo"}
+              <Sparkles size={14} />
+              {isInitializing ? "Inicializando plantilla..." : "Inicializar Base de Datos de Ejemplo"}
             </button>
           </div>
         ) : (
           <div>
             
-            {/* DESKTOP TABLE VIEW: Pristine, clean, ultra-professional */}
+            {/* 🖥️ DESKTOP MASTER TABLE VIEW */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50/80 border-b border-slate-200/80 text-[10px] font-bold text-slate-500 uppercase tracking-wider select-none">
-                    <th className="py-4 px-4 text-center w-12 bg-slate-50/40">
+                  <tr className="bg-slate-900/[0.03] border-b border-slate-200/60 text-[10px] font-black text-slate-600 uppercase tracking-widest select-none">
+                    <th className="py-4.5 px-4 text-center w-12 bg-white/10">
                       <input
                         type="checkbox"
                         checked={isAllSelected}
                         onChange={handleToggleSelectAll}
                         disabled={authorizedFiltered.length === 0}
-                        className="rounded border-slate-300 text-emerald-700 focus:ring-emerald-500/20 h-4 w-4 cursor-pointer accent-emerald-700 transition-all"
-                        title="Seleccionar todos los autorizados"
+                        className="rounded border-slate-300 text-emerald-700 focus:ring-emerald-500/10 h-4.5 w-4.5 cursor-pointer accent-emerald-700 transition-all shadow-inner"
+                        title="Seleccionar todo lo autorizado"
                       />
                     </th>
-                    <th className="py-4 px-5 text-center w-16 text-slate-400 font-mono">No.</th>
-                    <th className="py-4 px-6 min-w-[280px]">Medicamento / Clave FONSABI</th>
-                    <th className="py-4 px-6">Identificación (Lote y Caducidad)</th>
-                    <th className="py-4 px-6 text-right">Cantidad y Costo</th>
-                    <th className="py-4 px-6">Proveedor y Remisión</th>
-                    <th className="py-4 px-6 text-center">Estatus</th>
-                    <th className="py-4 px-6 text-center">Acción de Cotejo</th>
+                    <th className="py-4.5 px-5 text-center w-16 text-slate-400 font-mono">ID</th>
+                    <th className="py-4.5 px-6 min-w-[280px]">Especificación de Medicamento / Clave</th>
+                    <th className="py-4.5 px-6">Lote & Caducidad</th>
+                    <th className="py-4.5 px-6 text-right">Volumen & Costo</th>
+                    <th className="py-4.5 px-6">Proveedor y Remisión</th>
+                    <th className="py-4.5 px-6 text-center">Estatus Sanitario</th>
+                    <th className="py-4.5 px-6 text-center">Acciones</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200/50 text-xs">
@@ -486,94 +525,94 @@ export default function Dashboard({
                         key={`${entry.no}-${index}`}
                         className={`group transition-all duration-150 ${
                           isSelected 
-                            ? "bg-emerald-50/10 hover:bg-emerald-50/20" 
-                            : "hover:bg-slate-50/40"
+                            ? "bg-emerald-500/5 hover:bg-emerald-500/10" 
+                            : "hover:bg-white/40"
                         }`}
                       >
-                        {/* Checkbox */}
-                        <td className="py-4 px-4 text-center align-middle">
+                        {/* Selector para consolidación */}
+                        <td className="py-4.5 px-4 text-center align-middle">
                           {isAuthorized ? (
                             <input
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => handleToggleSelect(entry)}
-                              className="rounded border-slate-300 text-emerald-700 focus:ring-emerald-500/20 h-4 w-4 cursor-pointer accent-emerald-700 transition-all"
+                              className="rounded border-slate-300 text-emerald-700 focus:ring-emerald-500/10 h-4.5 w-4.5 cursor-pointer accent-emerald-700 transition-all shadow-sm"
                             />
                           ) : (
                             <div 
-                              className="w-4 h-4 mx-auto rounded bg-slate-100 border border-slate-200/60 cursor-not-allowed flex items-center justify-center text-[8px] text-slate-300 font-black" 
-                              title="Únicamente registros autorizados se pueden consolidar en oficios"
+                              className="w-4.5 h-4.5 mx-auto rounded bg-slate-100 border border-slate-200 flex items-center justify-center text-[11px] text-slate-300 font-black select-none" 
+                              title="Requiere estatus 'Autorizado' para integrar en acta de entrada"
                             >
                               -
                             </div>
                           )}
                         </td>
 
-                        {/* Order Item # */}
-                        <td className="py-4 px-5 text-center align-middle">
-                          <span className="inline-flex w-7 h-7 rounded-lg bg-slate-50 border border-slate-200/80 items-center justify-center font-mono text-xs font-bold text-slate-500 group-hover:bg-slate-100">
+                        {/* Partida ID */}
+                        <td className="py-4.5 px-5 text-center align-middle">
+                          <span className="inline-flex w-7.5 h-7.5 rounded-lg bg-slate-50 border border-slate-200 items-center justify-center font-mono text-xs font-bold text-slate-600 group-hover:bg-slate-100">
                             {entry.no}
                           </span>
                         </td>
 
-                        {/* Desc & Key */}
-                        <td className="py-4 px-6 max-w-[320px] align-middle">
-                          <div className="font-semibold text-slate-900 leading-snug group-hover:text-emerald-800 transition-colors line-clamp-2">
+                        {/* Medicamento y Clave */}
+                        <td className="py-4.5 px-6 max-w-[340px] align-middle">
+                          <div className="font-bold text-slate-900 leading-snug group-hover:text-emerald-900 transition-colors line-clamp-2">
                             {entry.descripcion}
                           </div>
-                          <div className="flex items-center gap-1.5 mt-1.5">
-                            <span className="text-[9px] font-mono font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 uppercase tracking-wider">
-                              CLAVE: {entry.codigoFonsabi}
+                          <div className="flex items-center gap-1.5 mt-2">
+                            <span className="text-[9px] font-mono font-black text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 uppercase tracking-widest">
+                              {entry.codigoFonsabi}
                             </span>
                           </div>
                         </td>
 
-                        {/* Batch & CAD */}
-                        <td className="py-4 px-6 align-middle">
-                          <div className="flex items-center">
-                            <span className="text-[10px] font-mono font-bold text-slate-700 bg-slate-50 px-2 py-0.5 rounded border border-slate-200/60">
+                        {/* Trazabilidad de Lote */}
+                        <td className="py-4.5 px-6 align-middle">
+                          <div>
+                            <span className="text-[10px] font-mono font-black text-slate-700 bg-white/70 px-2 py-0.5 rounded border border-slate-200">
                               LOTE: {entry.lote}
                             </span>
                           </div>
-                          <div className="flex items-center gap-1.5 text-[10px] text-slate-400 mt-1.5">
+                          <div className="flex items-center gap-1.5 text-[10px] text-slate-400 mt-2 font-medium">
                             <Calendar size={11} className="shrink-0 text-slate-400" />
-                            <span className="font-semibold text-slate-500">CAD: {entry.fechaCaducidad}</span>
+                            <span>CAD: {entry.fechaCaducidad}</span>
                           </div>
                         </td>
 
-                        {/* Cost & Qty */}
-                        <td className="py-4 px-6 text-right align-middle">
-                          <div className="font-extrabold text-slate-950 text-sm tracking-tight">
+                        {/* Cantidad y Costo */}
+                        <td className="py-4.5 px-6 text-right align-middle">
+                          <div className="font-extrabold text-slate-900 text-sm tracking-tight font-mono">
                             {Number(entry.cantidad).toLocaleString()}{" "}
                             <span className="text-[9px] text-slate-400 font-bold uppercase ml-0.5">Pzs</span>
                           </div>
-                          <div className="text-[10px] text-slate-400 font-mono mt-1 font-medium">
+                          <div className="text-[10px] text-slate-400 font-mono mt-1 font-semibold">
                             ${Number(entry.costoUnidad).toFixed(2)} c/u
                           </div>
                         </td>
 
-                        {/* Proveedor y Remisión */}
-                        <td className="py-4 px-6 max-w-[220px] align-middle">
+                        {/* Procedencia */}
+                        <td className="py-4.5 px-6 max-w-[220px] align-middle">
                           <div className="font-semibold text-slate-800 truncate" title={entry.proveedor}>
                             {entry.proveedor}
                           </div>
-                          <div className="text-[10px] text-slate-400 mt-1.5 font-mono">
-                            <span className="text-[9px] bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 text-slate-600 font-medium">
+                          <div className="text-[10px] text-slate-400 mt-2 font-mono">
+                            <span className="text-[9px] bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 text-slate-600">
                               REM: #{entry.remision}
                             </span>
                           </div>
                         </td>
 
-                        {/* Clear Status badge with icon */}
-                        <td className="py-4 px-6 text-center align-middle">
-                          <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wide border shadow-2xs ${
+                        {/* Sanitary Status with Luxury badges */}
+                        <td className="py-4.5 px-6 text-center align-middle">
+                          <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-sm ${
                             isAuthorized 
-                              ? "bg-emerald-500/10 text-emerald-800 border-emerald-500/30" 
+                              ? "bg-emerald-500/10 text-emerald-800 border-emerald-500/25" 
                               : isRejected
-                              ? "bg-rose-500/10 text-rose-800 border-rose-500/30"
-                              : "bg-amber-500/10 text-amber-800 border-amber-500/30"
+                              ? "bg-rose-500/10 text-rose-800 border-rose-500/25"
+                              : "bg-amber-500/10 text-amber-800 border-amber-500/25"
                           }`}>
-                            {isAuthorized && <Check size={11} className="text-emerald-700 stroke-[3]" />}
+                            {isAuthorized && <CheckCircle2 size={11} className="text-emerald-700" />}
                             {isRejected && <ShieldAlert size={11} className="text-rose-700" />}
                             {(!entry.estatus || entry.estatus === "Sin autorizar") && (
                               <Clock size={11} className="text-amber-700 animate-spin-slow" />
@@ -582,20 +621,20 @@ export default function Dashboard({
                           </span>
                         </td>
 
-                        {/* Action buttons */}
-                        <td className="py-4 px-6 text-center align-middle">
+                        {/* Acción para cotejo */}
+                        <td className="py-4.5 px-6 text-center align-middle">
                           <button
                             onClick={() => onSelectEntry(entry)}
-                            className={`inline-flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all duration-150 cursor-pointer ${
+                            className={`inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider px-4 py-2 rounded-xl transition-all duration-150 cursor-pointer ${
                               isAuthorized
-                                ? "text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 shadow-2xs"
+                                ? "text-slate-700 bg-slate-50 hover:bg-slate-200/70 border border-slate-200/80 shadow-3xs"
                                 : isRejected
                                 ? "text-rose-800 bg-rose-50 hover:bg-rose-100 border border-rose-100"
                                 : "text-white bg-slate-900 hover:bg-slate-800 hover:shadow-lg hover:shadow-slate-900/10"
                             }`}
                           >
-                            {isAuthorized ? "Ver Registro" : isRejected ? "Ver Nota" : "Verificar PDF"}
-                            <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform shrink-0" />
+                            {isAuthorized ? "Ver Ficha" : isRejected ? "Ver Nota" : "Cotejar"}
+                            <ChevronRight size={13} className="group-hover:translate-x-0.5 transition-transform shrink-0" />
                           </button>
                         </td>
                       </tr>
@@ -605,11 +644,11 @@ export default function Dashboard({
               </table>
             </div>
 
-            {/* MOBILE LIST VIEW: Breathtakingly beautiful responsive bento card stack */}
+            {/* 📱 MOBILE LIST VIEW: Responsive Card Stack */}
             <div className="md:hidden block p-4 space-y-4">
-              <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 pb-2 border-b border-slate-100 flex justify-between items-center">
+              <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 pb-2 border-b border-slate-100 flex justify-between items-center">
                 <span>Partidas ({filteredEntries.length})</span>
-                <span className="text-slate-500">Filtrado activo</span>
+                <span className="text-slate-500">Filtrado federal</span>
               </div>
               
               {filteredEntries.map((entry, index) => {
@@ -622,11 +661,11 @@ export default function Dashboard({
                     key={`mob-${entry.no}-${index}`}
                     className={`p-5 rounded-2xl border transition-all duration-200 space-y-4 ${
                       isSelected 
-                        ? "bg-emerald-500/[0.04] border-emerald-500/40 shadow-md shadow-emerald-500/5" 
-                        : "bg-white border-slate-200/70 hover:border-slate-300 shadow-xs"
+                        ? "bg-emerald-500/[0.04] border-emerald-500/35 shadow-md shadow-emerald-500/5" 
+                        : "bg-white/60 border-white/40 shadow-sm hover:border-slate-300"
                     }`}
                   >
-                    {/* Header: Select, #, Status */}
+                    {/* Check, ID, and Status Badge */}
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2.5">
                         {isAuthorized ? (
@@ -634,30 +673,30 @@ export default function Dashboard({
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => handleToggleSelect(entry)}
-                            className="rounded border-slate-300 text-emerald-700 focus:ring-emerald-500/20 h-4 w-4 cursor-pointer accent-emerald-700"
+                            className="rounded border-slate-300 text-emerald-700 focus:ring-emerald-500/10 h-4.5 w-4.5 cursor-pointer accent-emerald-700 shadow-sm"
                           />
                         ) : (
-                          <div className="w-4 h-4 rounded bg-slate-100 border border-slate-200/50 flex items-center justify-center text-[8px] text-slate-400 font-bold">
+                          <div className="w-4.5 h-4.5 rounded bg-slate-100 border border-slate-200 flex items-center justify-center text-[9px] text-slate-400 font-bold select-none">
                             -
                           </div>
                         )}
-                        <span className="inline-flex w-6 h-6 rounded-lg bg-slate-50 border border-slate-200/60 items-center justify-center font-mono text-[11px] font-black text-slate-500">
+                        <span className="inline-flex w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 items-center justify-center font-mono text-xs font-black text-slate-500">
                           {entry.no}
                         </span>
                       </div>
 
                       {/* Status */}
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wide border shadow-3xs ${
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border shadow-xs ${
                         isAuthorized 
-                          ? "bg-emerald-500/10 text-emerald-800 border-emerald-500/30" 
+                          ? "bg-emerald-500/10 text-emerald-800 border-emerald-500/25" 
                           : isRejected
-                          ? "bg-rose-500/10 text-rose-800 border-rose-500/30"
-                          : "bg-amber-500/10 text-amber-800 border-amber-500/30"
+                          ? "bg-rose-500/10 text-rose-800 border-rose-500/25"
+                          : "bg-amber-500/10 text-amber-800 border-amber-500/25"
                       }`}>
-                        {isAuthorized && <Check size={9} className="text-emerald-700 stroke-[3]" />}
-                        {isRejected && <ShieldAlert size={9} className="text-rose-700" />}
+                        {isAuthorized && <CheckCircle2 size={10} className="text-emerald-700" />}
+                        {isRejected && <ShieldAlert size={10} className="text-rose-700" />}
                         {(!entry.estatus || entry.estatus === "Sin autorizar") && (
-                          <Clock size={9} className="text-amber-700 animate-spin-slow" />
+                          <Clock size={10} className="text-amber-700 animate-spin-slow" />
                         )}
                         {entry.estatus || "Sin autorizar"}
                       </span>
@@ -665,41 +704,41 @@ export default function Dashboard({
 
                     {/* Drug Desc & Code */}
                     <div className="space-y-1">
-                      <h4 className="text-xs font-bold text-slate-900 leading-snug">
+                      <h4 className="text-xs font-black text-slate-900 leading-snug">
                         {entry.descripcion}
                       </h4>
-                      <p className="text-[9px] font-mono text-slate-500 uppercase tracking-wider">
+                      <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">
                         CLAVE: {entry.codigoFonsabi}
                       </p>
                     </div>
 
-                    {/* Meta info block */}
-                    <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100 text-[11px]">
+                    {/* Meta Info Grid */}
+                    <div className="grid grid-cols-2 gap-3.5 pt-3.5 border-t border-slate-100 text-[11px]">
                       
                       {/* Qty & Price */}
                       <div className="space-y-0.5">
-                        <span className="block text-[8px] uppercase tracking-wider text-slate-400 font-bold">Cantidad</span>
-                        <p className="font-extrabold text-slate-950 font-mono">
-                          {Number(entry.cantidad).toLocaleString()} <span className="text-[9px] text-slate-400 font-bold">Pzs</span>
+                        <span className="block text-[8px] uppercase tracking-wider text-slate-400 font-bold">Cantidad de Insumo</span>
+                        <p className="font-extrabold text-slate-950 font-mono text-xs">
+                          {Number(entry.cantidad).toLocaleString()} <span className="text-[9px] text-slate-400 font-black">Pzs</span>
                         </p>
-                        <p className="text-[9px] text-slate-400 font-mono">${Number(entry.costoUnidad).toFixed(2)} c/u</p>
+                        <p className="text-[9px] text-slate-400 font-mono font-medium">${Number(entry.costoUnidad).toFixed(2)} c/u</p>
                       </div>
 
-                      {/* Batch & CAD */}
+                      {/* Lote & CAD */}
                       <div className="space-y-0.5">
-                        <span className="block text-[8px] uppercase tracking-wider text-slate-400 font-bold">Identificación</span>
-                        <p className="font-bold text-slate-700 font-mono text-[10px]">LOTE: {entry.lote}</p>
-                        <p className="text-[9px] text-slate-400 flex items-center gap-1 font-mono">
+                        <span className="block text-[8px] uppercase tracking-wider text-slate-400 font-bold">Lote e Identificación</span>
+                        <p className="font-black text-slate-700 font-mono text-[10px]">LOTE: {entry.lote}</p>
+                        <p className="text-[9px] text-slate-400 flex items-center gap-1 font-mono font-medium">
                           <Calendar size={10} />
                           {entry.fechaCaducidad}
                         </p>
                       </div>
 
-                      {/* Provider */}
+                      {/* Provider info */}
                       <div className="col-span-2 space-y-0.5">
-                        <span className="block text-[8px] uppercase tracking-wider text-slate-400 font-bold">Proveedor y Referencia</span>
-                        <p className="font-bold text-slate-700 truncate">{entry.proveedor}</p>
-                        <p className="text-[9px] text-slate-500 font-mono">Remisión: #{entry.remision}</p>
+                        <span className="block text-[8px] uppercase tracking-wider text-slate-400 font-bold">Proveedor Sanitario</span>
+                        <p className="font-bold text-slate-700 truncate text-[11px]">{entry.proveedor}</p>
+                        <p className="text-[9px] text-slate-500 font-mono font-semibold">Remisión: #{entry.remision}</p>
                       </div>
                     </div>
 
@@ -707,15 +746,15 @@ export default function Dashboard({
                     <div className="pt-2">
                       <button
                         onClick={() => onSelectEntry(entry)}
-                        className={`w-full flex items-center justify-center gap-2 text-xs font-bold py-2.5 rounded-xl transition-all duration-150 cursor-pointer ${
+                        className={`w-full flex items-center justify-center gap-2 text-xs font-black uppercase tracking-wider py-2.5 rounded-xl transition-all duration-150 cursor-pointer ${
                           isAuthorized
-                            ? "text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200/80"
+                            ? "text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200"
                             : isRejected
                             ? "text-rose-800 bg-rose-50 hover:bg-rose-100 border border-rose-100"
                             : "text-white bg-slate-950 hover:bg-slate-900 shadow-md shadow-slate-950/10"
                         }`}
                       >
-                        {isAuthorized ? "Ver Registro Completo" : isRejected ? "Ver Nota de Rechazo" : "Iniciar Cotejo con IA"}
+                        {isAuthorized ? "Ver Ficha Completa" : isRejected ? "Ver Nota de Rechazo" : "Iniciar Cotejo con IA"}
                         <ArrowRight size={13} />
                       </button>
                     </div>
@@ -724,10 +763,10 @@ export default function Dashboard({
               })}
             </div>
 
-            {/* Zero state inside filters */}
+            {/* Zero state inside table filters */}
             {filteredEntries.length === 0 && (
-              <div className="py-20 text-center text-slate-400 font-bold text-xs">
-                No se encontraron registros que coincidan con los filtros seleccionados.
+              <div className="py-24 text-center text-slate-400 font-bold text-xs">
+                No se encontraron registros que coincidan con los filtros gubernamentales seleccionados.
               </div>
             )}
 
