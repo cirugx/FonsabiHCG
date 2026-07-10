@@ -227,32 +227,37 @@ export default function App() {
   // Render Login Gate
   if (!user) {
     return (
-      <div className="min-h-screen bg-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-4">
-          <div className="inline-flex p-3 bg-blue-600 rounded-xl text-white shadow-lg shadow-blue-200">
-            <ShieldCheck size={40} />
+      <div className="min-h-screen bg-slate-50 relative overflow-hidden flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+        {/* Dynamic background glowing shapes for glassmorphism */}
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-400/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-[10%] right-[-10%] w-[60%] h-[60%] bg-indigo-400/10 rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute top-[40%] right-[15%] w-[35%] h-[35%] bg-teal-400/5 rounded-full blur-[100px] pointer-events-none" />
+
+        <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-4 relative z-10">
+          <div className="inline-flex p-3.5 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-2xl text-white shadow-xl shadow-blue-500/15 border border-blue-400/20">
+            <ShieldCheck size={36} />
           </div>
-          <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight font-sans">
-            FONSABI <span className="text-blue-600">Almacén</span>
+          <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+            FONSABI <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Almacén</span>
           </h2>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+          <p className="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed font-medium">
             Plataforma Profesional de Verificación de Entradas de Insumos Médicos.
           </p>
         </div>
 
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow-sm border border-slate-200 sm:rounded-xl sm:px-10 space-y-6">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+          <div className="bg-white/45 backdrop-blur-lg py-8 px-4 shadow-[0_12px_40px_rgba(0,0,0,0.06)] border border-white/60 sm:rounded-3xl sm:px-10 space-y-6">
             <div className="space-y-4">
-              <div className="flex gap-3 items-start text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-200">
-                <Info size={16} className="text-blue-500 shrink-0 mt-0.5" />
-                <p className="leading-relaxed">
+              <div className="flex gap-3 items-start text-xs text-slate-600 bg-white/50 p-4 rounded-xl border border-slate-200/50">
+                <Info size={16} className="text-blue-600 shrink-0 mt-0.5" />
+                <p className="leading-relaxed font-medium text-slate-500">
                   Para ingresar, inicia sesión con tu cuenta institucional de Google. Esto otorgará permisos seguros para leer la Hoja de Control y registrar tus firmas de auditoría.
                 </p>
               </div>
             </div>
 
             {errorMessage && (
-              <div className="p-3 bg-red-50 text-xs text-red-700 font-medium rounded-lg border border-red-200">
+              <div className="p-3.5 bg-red-500/10 text-xs text-red-700 font-bold rounded-xl border border-red-500/20">
                 {errorMessage}
               </div>
             )}
@@ -262,7 +267,7 @@ export default function App() {
               <button 
                 onClick={handleLogin}
                 disabled={isLoggingIn || !authInitialized}
-                className="gsi-material-button w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-sm font-semibold rounded-lg shadow-xs transition-colors duration-150 cursor-pointer"
+                className="gsi-material-button w-full flex items-center justify-center gap-3 px-4 py-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-xs hover:shadow-md transition-all duration-150 cursor-pointer"
               >
                 <div className="gsi-material-button-icon shrink-0">
                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style={{ display: "block", width: "18px", height: "18px" }}>
@@ -272,7 +277,7 @@ export default function App() {
                     <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
                   </svg>
                 </div>
-                <span className="gsi-material-button-contents font-sans">
+                <span className="gsi-material-button-contents">
                   {isLoggingIn ? "Conectando..." : "Iniciar Sesión con Google"}
                 </span>
               </button>
@@ -285,68 +290,74 @@ export default function App() {
 
   // Render Core Application Layout
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col justify-between font-sans">
-      
-      <div className="w-full flex-1 flex flex-col">
-        {/* Universal Upper Navigation Bar - Styled to Match the Professional Dark Header from Theme */}
-        <header className="bg-slate-900 text-white px-6 py-4 flex justify-between items-center shrink-0 shadow-md">
+    <div className="min-h-screen bg-slate-50 relative overflow-hidden flex flex-col justify-between font-sans">
+      {/* Dynamic background glowing shapes for glassmorphism */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-400/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[10%] right-[-10%] w-[60%] h-[60%] bg-indigo-400/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-[40%] right-[15%] w-[35%] h-[35%] bg-teal-400/5 rounded-full blur-[100px] pointer-events-none" />
+
+      <div className="w-full flex-1 flex flex-col relative z-10">
+        {/* Universal Upper Navigation Bar - Beautiful Floating Glass Header */}
+        <header className="bg-slate-900/90 backdrop-blur-md text-white px-6 py-4 flex justify-between items-center shrink-0 shadow-[0_4px_30px_rgba(0,0,0,0.03)] border-b border-slate-800/80 sticky top-0 z-50">
           {/* Left: Brand name */}
           <div className="flex items-center gap-4 cursor-pointer" onClick={() => setSelectedEntry(null)}>
-            <div className="w-10 h-10 bg-blue-600 rounded flex items-center justify-center font-bold text-xl shadow-md text-white">
+            <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl flex items-center justify-center font-extrabold text-lg shadow-lg shadow-blue-500/20 text-white border border-blue-400/20">
               F
             </div>
             <div>
-              <h1 className="text-lg font-semibold leading-none tracking-tight">FONSABI | Control de Almacén</h1>
-              <p className="text-xs text-slate-400 mt-1">Verificación de Entradas de Insumos Médicos</p>
+              <h1 className="text-base font-bold leading-none tracking-tight flex items-center gap-2">
+                FONSABI <span className="text-[10px] bg-blue-500/20 border border-blue-500/30 text-blue-400 font-extrabold px-1.5 py-0.5 rounded-md uppercase tracking-wider">Almacén</span>
+              </h1>
+              <p className="text-[10px] text-slate-400 mt-1 font-medium">Verificación de Entradas de Insumos Médicos</p>
             </div>
           </div>
 
           {/* Right: Profile, status and disconnect */}
           <div className="flex items-center gap-6">
             <div className="text-right hidden sm:block">
-              <p className="text-xs text-slate-400 font-medium">Analista de Inventario</p>
-              <p className="text-sm font-semibold text-slate-100">{user.displayName || "Analista"}</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Analista Activo</p>
+              <p className="text-xs font-bold text-slate-100 mt-0.5">{user.displayName || "Analista"}</p>
             </div>
             {user.photoURL ? (
               <img 
                 src={user.photoURL} 
                 alt="Avatar" 
-                className="w-10 h-10 rounded-full border border-slate-700 bg-slate-800"
+                className="w-9 h-9 rounded-full border border-slate-700 bg-slate-800 shadow-xs"
                 referrerPolicy="no-referrer"
               />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center font-bold text-sm">
+              <div className="w-9 h-9 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center font-bold text-xs">
                 {(user.displayName || "A")[0]}
               </div>
             )}
             <button
               onClick={handleLogout}
               title="Cerrar Sesión"
-              className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
+              className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800/60 transition-all duration-200 cursor-pointer border border-transparent hover:border-slate-700/50"
             >
-              <LogOut size={18} />
+              <LogOut size={16} />
             </button>
           </div>
         </header>
 
       {/* Main Content Pane */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         
         {/* Spreadsheet Link Step (only if sheet is not linked yet) */}
         {!spreadsheetId ? (
-          <div className="max-w-2xl mx-auto bg-white rounded-2xl border border-slate-100 p-8 shadow-sm space-y-6 mt-12">
-            <div className="text-center space-y-2">
-              <div className="inline-flex p-3 bg-indigo-50 rounded-2xl text-indigo-600">
+          <div className="max-w-2xl mx-auto bg-white/50 backdrop-blur-lg rounded-3xl border border-white/60 p-8 shadow-[0_12px_40px_rgba(0,0,0,0.06)] space-y-6 mt-12">
+            <div className="text-center space-y-3">
+              <div className="inline-flex p-3 bg-blue-500/10 rounded-2xl text-blue-600 border border-blue-500/20">
                 <FileSpreadsheet size={32} />
               </div>
-              <h3 className="text-xl font-bold text-slate-800">Vincular Base de Datos (Google Sheets)</h3>
+              <h3 className="text-xl font-extrabold text-slate-800 tracking-tight">Vincular Base de Datos (Google Sheets)</h3>
               <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
                 FONSABI utiliza Google Sheets para la persistencia de datos. Puedes vincular una hoja existente o generar una nueva plantilla con datos muestra.
               </p>
             </div>
 
             {errorMessage && (
-              <div className="p-3 bg-red-50 text-xs text-red-700 font-medium rounded-lg border border-red-100">
+              <div className="p-3.5 bg-red-500/10 text-xs text-red-700 font-bold rounded-xl border border-red-500/20">
                 {errorMessage}
               </div>
             )}
@@ -354,7 +365,7 @@ export default function App() {
             {/* Link input form */}
             <form onSubmit={handleLinkSheet} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
                   Enlace o ID de la Hoja de Google Sheets
                 </label>
                 <div className="flex gap-2">
@@ -364,11 +375,11 @@ export default function App() {
                     placeholder="https://docs.google.com/spreadsheets/d/..."
                     value={inputSpreadsheetId}
                     onChange={(e) => setInputSpreadsheetId(e.target.value)}
-                    className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800"
+                    className="flex-1 px-4 py-3 rounded-xl border border-slate-200/80 bg-white/60 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-800 shadow-2xs placeholder-slate-400"
                   />
                   <button
                     type="submit"
-                    className="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1 cursor-pointer shrink-0"
+                    className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg hover:shadow-blue-200 transition-all cursor-pointer shrink-0"
                   >
                     Vincular <ArrowRight size={14} />
                   </button>
@@ -377,16 +388,16 @@ export default function App() {
             </form>
 
             <div className="relative flex py-2 items-center">
-              <div className="flex-grow border-t border-slate-100"></div>
-              <span className="flex-shrink mx-4 text-xs font-bold text-slate-300 uppercase tracking-wider">o crea una plantilla</span>
-              <div className="flex-grow border-t border-slate-100"></div>
+              <div className="flex-grow border-t border-slate-200/50"></div>
+              <span className="flex-shrink mx-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">o crea una plantilla</span>
+              <div className="flex-grow border-t border-slate-200/50"></div>
             </div>
 
             <div className="flex justify-center">
               <button
                 onClick={handleCreateTemplate}
                 disabled={isInitializingSheet}
-                className="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+                className="w-full sm:w-auto px-6 py-3.5 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <PlusCircle size={16} />
                 {isInitializingSheet ? "Creando en tu Drive..." : "Generar Nueva Hoja Plantilla FONSABI"}

@@ -78,88 +78,88 @@ export default function Dashboard({
 
   return (
     <div className="space-y-6">
-      {/* Metrics Grid - Styled according to the Professional Polish design */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Metrics Grid - Styled with a beautiful, modern Glassmorphic appearance */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
         {/* Metric 1: Pending */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex items-center justify-between hover:shadow-md transition-shadow">
+        <div className="bg-white/45 backdrop-blur-lg rounded-2xl shadow-[0_8px_32px_0_rgba(15,23,42,0.04)] border border-white/60 p-5 flex items-center justify-between hover:bg-white/65 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group">
           <div>
             <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Registros Pendientes</p>
-            <h3 className="text-2xl font-bold text-slate-800 mt-1">{metrics.pending}</h3>
-            <p className="text-[10px] text-amber-600 mt-1 font-semibold flex items-center gap-1">
-              <AlertTriangle size={12} /> Requieren cotejo de IA
+            <h3 className="text-3xl font-extrabold text-slate-800 mt-1.5 tracking-tight">{metrics.pending}</h3>
+            <p className="text-[10px] text-amber-600 mt-1.5 font-bold flex items-center gap-1">
+              <AlertTriangle size={12} className="animate-pulse" /> Requieren cotejo de IA
             </p>
           </div>
-          <div className="p-2.5 bg-amber-50 rounded-lg text-amber-600 border border-amber-100">
-            <ClipboardList size={20} />
+          <div className="p-3 bg-amber-500/10 rounded-xl text-amber-700 border border-amber-500/20 group-hover:scale-110 transition-transform duration-300">
+            <ClipboardList size={22} />
           </div>
         </div>
 
         {/* Metric 2: Approved */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex items-center justify-between hover:shadow-md transition-shadow">
+        <div className="bg-white/45 backdrop-blur-lg rounded-2xl shadow-[0_8px_32px_0_rgba(15,23,42,0.04)] border border-white/60 p-5 flex items-center justify-between hover:bg-white/65 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group">
           <div>
             <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Autorizados Hoy</p>
-            <h3 className="text-2xl font-bold text-slate-800 mt-1">{metrics.approved}</h3>
-            <p className="text-[10px] text-green-600 mt-1 font-semibold flex items-center gap-1">
+            <h3 className="text-3xl font-extrabold text-slate-800 mt-1.5 tracking-tight">{metrics.approved}</h3>
+            <p className="text-[10px] text-emerald-600 mt-1.5 font-bold flex items-center gap-1">
               <CheckCircle2 size={12} /> Guardados en Google Sheets
             </p>
           </div>
-          <div className="p-2.5 bg-green-50 rounded-lg text-green-600 border border-green-100">
-            <CheckCircle2 size={20} />
+          <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-700 border border-emerald-500/20 group-hover:scale-110 transition-transform duration-300">
+            <CheckCircle2 size={22} />
           </div>
         </div>
 
         {/* Metric 3: Rejected */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex items-center justify-between hover:shadow-md transition-shadow">
+        <div className="bg-white/45 backdrop-blur-lg rounded-2xl shadow-[0_8px_32px_0_rgba(15,23,42,0.04)] border border-white/60 p-5 flex items-center justify-between hover:bg-white/65 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group">
           <div>
             <p className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Discrepancias Detectadas</p>
-            <h3 className="text-2xl font-bold text-red-600 mt-1">{metrics.rejected}</h3>
-            <p className="text-[10px] text-red-600 mt-1 font-semibold flex items-center gap-1">
+            <h3 className="text-3xl font-extrabold text-red-600 mt-1.5 tracking-tight">{metrics.rejected}</h3>
+            <p className="text-[10px] text-red-600 mt-1.5 font-bold flex items-center gap-1">
               <XCircle size={12} /> Nota de devolución emitida
             </p>
           </div>
-          <div className="p-2.5 bg-red-50 rounded-lg text-red-600 border border-red-100">
-            <XCircle size={20} />
+          <div className="p-3 bg-red-500/10 rounded-xl text-red-700 border border-red-500/20 group-hover:scale-110 transition-transform duration-300">
+            <XCircle size={22} />
           </div>
         </div>
 
         {/* Metric 4: Efficiency */}
-        <div className="bg-blue-50 rounded-xl shadow-sm border border-blue-200 p-4 flex items-center justify-between hover:shadow-md transition-shadow">
+        <div className="bg-blue-500/10 backdrop-blur-lg rounded-2xl shadow-[0_8px_32px_0_rgba(59,130,246,0.06)] border border-blue-500/20 p-5 flex items-center justify-between hover:bg-blue-500/15 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group">
           <div>
-            <p className="text-[10px] uppercase font-bold text-blue-600 tracking-wider">Eficiencia de IA</p>
-            <h3 className="text-2xl font-bold text-blue-800 mt-1">98.4%</h3>
-            <p className="text-[10px] text-blue-700 mt-1 font-medium">
+            <p className="text-[10px] uppercase font-bold text-blue-700 tracking-wider">Eficiencia de IA</p>
+            <h3 className="text-3xl font-extrabold text-blue-900 mt-1.5 tracking-tight">98.4%</h3>
+            <p className="text-[10px] text-blue-700 mt-1.5 font-semibold">
               Cotejo de PDFs en vivo por Gemini
             </p>
           </div>
-          <div className="p-2.5 bg-blue-100 rounded-lg text-blue-700 border border-blue-200">
-            <AlertTriangle size={20} className="text-blue-600" />
+          <div className="p-3 bg-blue-500/20 rounded-xl text-blue-800 border border-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+            <AlertTriangle size={22} className="text-blue-700" />
           </div>
         </div>
       </div>
 
       {/* Control Bar: Search, Filters & Actions */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div className="bg-white/45 backdrop-blur-lg p-4 rounded-2xl border border-white/60 shadow-[0_8px_32px_0_rgba(15,23,42,0.04)] flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-2.5 text-slate-400" size={18} />
+          <Search className="absolute left-3.5 top-3 text-slate-400" size={16} />
           <input
             type="text"
             placeholder="Buscar por código, lote, proveedor, folio..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-4 py-2 w-full rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-all"
+            className="pl-10 pr-4 py-2.5 w-full rounded-xl border border-slate-200/80 bg-white/60 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs transition-all shadow-2xs"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           {/* Status Filters */}
-          <div className="flex bg-slate-50 p-1 rounded-lg border border-slate-200 text-xs font-medium">
+          <div className="flex bg-slate-100/50 p-1 rounded-xl border border-slate-200/60 text-[11px] font-semibold">
             {["Todos", "Sin autorizar", "Autorizado", "Rechazado"].map((status) => (
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
-                className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
                   statusFilter === status
-                    ? "bg-white text-blue-600 shadow-xs font-semibold"
+                    ? "bg-white text-blue-700 shadow-sm font-bold border border-slate-200/40"
                     : "text-slate-500 hover:text-slate-800"
                 }`}
               >
@@ -172,9 +172,9 @@ export default function Dashboard({
           <button
             onClick={onRefresh}
             disabled={isLoading || !spreadsheetId}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200/80 bg-white/60 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-50 transition-all cursor-pointer shadow-2xs"
           >
-            <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
+            <RefreshCw size={13} className={isLoading ? "animate-spin" : ""} />
             Actualizar
           </button>
 
@@ -183,9 +183,9 @@ export default function Dashboard({
               href={`https://docs.google.com/spreadsheets/d/${spreadsheetId}`}
               target="_blank"
               referrerPolicy="no-referrer"
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-blue-600 hover:bg-blue-50 transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-blue-200 bg-blue-50/50 text-xs font-bold text-blue-700 hover:bg-blue-50 transition-all shadow-2xs"
             >
-              <ExternalLink size={14} />
+              <ExternalLink size={13} />
               Abrir Hoja
             </a>
           )}
@@ -193,20 +193,20 @@ export default function Dashboard({
       </div>
 
       {/* Main Table Card */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white/45 backdrop-blur-lg rounded-2xl border border-white/60 shadow-[0_8px_32px_0_rgba(15,23,42,0.04)] overflow-hidden">
         {isLoading ? (
-          <div className="py-20 flex flex-col items-center justify-center space-y-3">
-            <RefreshCw className="animate-spin text-blue-600" size={36} />
-            <p className="text-sm font-medium text-slate-500">Cargando registros desde Google Sheets...</p>
+          <div className="py-24 flex flex-col items-center justify-center space-y-4">
+            <RefreshCw className="animate-spin text-blue-600" size={40} />
+            <p className="text-xs font-bold text-slate-500 tracking-wide uppercase">Cargando registros desde Google Sheets...</p>
           </div>
         ) : entries.length === 0 ? (
-          <div className="p-12 text-center max-w-xl mx-auto flex flex-col items-center space-y-4">
-            <div className="p-4 bg-blue-50 rounded-full text-blue-600">
-              <Database size={32} />
+          <div className="p-16 text-center max-w-xl mx-auto flex flex-col items-center space-y-4">
+            <div className="p-4 bg-blue-500/10 rounded-2xl text-blue-600 border border-blue-100">
+              <Database size={36} />
             </div>
             <div>
               <h4 className="text-lg font-bold text-slate-800">No hay datos vinculados</h4>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
                 La hoja de cálculo seleccionada no tiene entradas o no ha sido inicializada con la plantilla FONSABI.
               </p>
             </div>

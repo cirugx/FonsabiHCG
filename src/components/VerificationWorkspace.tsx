@@ -108,41 +108,41 @@ export default function VerificationWorkspace({
 
   return (
     <div className="space-y-6">
-      {/* Upper Navigation Header */}
-      <div className="flex items-center justify-between border-b border-slate-100 pb-4 bg-white/50 backdrop-blur-xs sticky top-0 z-10">
+      {/* Upper Navigation Header - Beautiful glass strip */}
+      <div className="flex items-center justify-between border border-white/60 pb-3 p-4 bg-white/45 backdrop-blur-lg sticky top-16 z-40 rounded-2xl shadow-[0_4px_24px_rgba(15,23,42,0.02)]">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
-            className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
+            className="p-2.5 bg-white/60 hover:bg-white rounded-xl text-slate-500 hover:text-slate-800 transition-all cursor-pointer border border-slate-200/60 shadow-2xs"
           >
-            <ArrowLeft size={18} />
+            <ArrowLeft size={16} />
           </button>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-mono bg-slate-100 text-slate-500 text-xs px-2 py-0.5 rounded-sm font-semibold">
+              <span className="font-mono bg-blue-50 text-blue-700 text-[10px] px-2 py-0.5 rounded border border-blue-100 font-extrabold uppercase">
                 No. {entry.no}
               </span>
-              <span className="text-xs font-semibold text-slate-400 font-mono">
+              <span className="text-[10px] font-bold text-slate-400 font-mono tracking-wider">
                 {entry.codigoFonsabi}
               </span>
             </div>
-            <h2 className="text-lg font-bold text-slate-800 mt-0.5">{entry.descripcion}</h2>
+            <h2 className="text-base font-extrabold text-slate-800 mt-1 leading-snug">{entry.descripcion}</h2>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={() => runAnalysis(true)}
-            className="text-xs font-semibold text-amber-600 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+            className="text-[10px] font-bold text-amber-700 hover:text-amber-800 bg-amber-500/10 hover:bg-amber-500/20 px-3 py-2 rounded-xl transition-all border border-amber-500/25 cursor-pointer shadow-2xs"
           >
             Forzar Análisis Simulado
           </button>
           <button
             onClick={() => runAnalysis(false)}
             disabled={loadingAnalysis}
-            className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-semibold disabled:opacity-50 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-bold disabled:opacity-50 transition-all cursor-pointer shadow-md shadow-blue-200"
           >
-            <Sparkles size={14} className={loadingAnalysis ? "animate-spin" : ""} />
+            <Sparkles size={13} className={loadingAnalysis ? "animate-spin" : ""} />
             Reanalizar
           </button>
         </div>
@@ -152,21 +152,21 @@ export default function VerificationWorkspace({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[550px]">
         
         {/* Left Side: Native or Simulated Invoice Viewer (Columns: 5) */}
-        <div className="lg:col-span-5 flex flex-col bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
-          <div className="bg-slate-50 px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-              <FileText size={14} /> Inspección Visual Humana
+        <div className="lg:col-span-5 flex flex-col bg-white/45 backdrop-blur-lg rounded-2xl border border-white/60 shadow-[0_8px_32px_0_rgba(15,23,42,0.04)] overflow-hidden">
+          <div className="bg-slate-50/50 px-4 py-3.5 border-b border-slate-200/50 flex items-center justify-between">
+            <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <FileText size={14} className="text-slate-400" /> Inspección Visual Humana
             </span>
-            <div className="flex bg-slate-200 p-0.5 rounded-md text-[10px] font-bold">
+            <div className="flex bg-slate-200/60 p-0.5 rounded-lg text-[10px] font-bold">
               <button
                 onClick={() => setViewMode("invoice_mock")}
-                className={`px-2 py-1 rounded-sm ${viewMode === "invoice_mock" ? "bg-white text-slate-800 shadow-xs" : "text-slate-500"}`}
+                className={`px-2.5 py-1 rounded-md transition-all ${viewMode === "invoice_mock" ? "bg-white text-slate-800 shadow-2xs" : "text-slate-500 hover:text-slate-800"}`}
               >
                 Vista de Respaldo
               </button>
               <button
                 onClick={() => setViewMode("native")}
-                className={`px-2 py-1 rounded-sm ${viewMode === "native" ? "bg-white text-slate-800 shadow-xs" : "text-slate-500"}`}
+                className={`px-2.5 py-1 rounded-md transition-all ${viewMode === "native" ? "bg-white text-slate-800 shadow-2xs" : "text-slate-500 hover:text-slate-800"}`}
               >
                 Visor PDF Nativo
               </button>
@@ -274,14 +274,16 @@ export default function VerificationWorkspace({
         </div>
 
         {/* Right Side: Gemini Confrontation Panel (Columns: 7) */}
-        <div className="lg:col-span-7 flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles size={14} className="text-blue-500" /> Cotejo Inteligente de IA (Gemini 3.5 Flash)
+        <div className="lg:col-span-7 flex flex-col bg-white/45 backdrop-blur-lg rounded-2xl border border-white/60 shadow-[0_8px_32px_0_rgba(15,23,42,0.04)] overflow-hidden">
+          <div className="bg-slate-50/50 px-4 py-3.5 border-b border-slate-200/50 flex items-center justify-between">
+            <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles size={14} className="text-blue-500 animate-pulse" /> Cotejo Inteligente de IA (Gemini 2.5 Flash)
             </span>
             {report && (
-              <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${
-                report.isMock ? "bg-amber-100 text-amber-800" : "bg-blue-100 text-blue-800"
+              <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-lg border ${
+                report.isMock 
+                  ? "bg-amber-500/10 text-amber-700 border-amber-500/20" 
+                  : "bg-blue-500/10 text-blue-700 border-blue-500/20"
               }`}>
                 {report.isMock ? "Modo Simulación" : "IA En Vivo"}
               </span>
@@ -339,34 +341,33 @@ export default function VerificationWorkspace({
             {/* Verification Content */}
             {!loadingAnalysis && report && (
               <div className="space-y-6 flex-1">
-                
                 {/* Match Percentage circular widget */}
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center justify-between">
+                <div className="bg-white/40 backdrop-blur-md p-4 rounded-2xl border border-white/60 flex items-center justify-between shadow-[0_4px_24px_rgba(15,23,42,0.02)]">
                   <div>
-                    <h4 className="text-sm font-bold text-slate-800">Cotejo del Documento</h4>
-                    <p className="text-xs text-slate-500 mt-0.5">Se evaluaron 6 campos críticos del almacén</p>
+                    <h4 className="text-xs font-extrabold text-slate-800 tracking-tight uppercase">Cotejo del Documento</h4>
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Se evaluaron 6 campos críticos del almacén</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="relative flex items-center justify-center">
                       <svg className="w-16 h-16 transform -rotate-90">
-                        <circle cx="32" cy="32" r="28" className="stroke-current text-slate-200" strokeWidth="6" fill="transparent" />
+                        <circle cx="32" cy="32" r="28" className="stroke-current text-slate-200/60" strokeWidth="6" fill="transparent" />
                         <circle cx="32" cy="32" r="28" className={`stroke-current ${
                           report.matchPercentage === 100 
-                            ? "text-green-500" 
+                            ? "text-emerald-500" 
                             : report.matchPercentage >= 70 
                             ? "text-amber-500" 
                             : "text-red-500"
                         }`} strokeWidth="6" fill="transparent" strokeDasharray={175.9} strokeDashoffset={175.9 - (175.9 * report.matchPercentage) / 100} />
                       </svg>
-                      <span className="absolute text-sm font-bold text-slate-800">{report.matchPercentage}%</span>
+                      <span className="absolute text-sm font-extrabold text-slate-800">{report.matchPercentage}%</span>
                     </div>
                     <div>
-                      <div className={`text-xs font-extrabold ${
-                        report.matchPercentage === 100 ? "text-green-600" : "text-amber-600"
+                      <div className={`text-xs font-black tracking-wide ${
+                        report.matchPercentage === 100 ? "text-emerald-600" : "text-amber-600"
                       }`}>
                         {report.matchPercentage === 100 ? "COINCIDENCIA TOTAL" : "DISCREPANCIAS DETECTADAS"}
                       </div>
-                      <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                      <div className="text-[10px] text-slate-400 font-bold font-mono mt-0.5">
                         {report.matchPercentage === 100 ? "Cotejo limpio, listo" : "Se aconseja cautela"}
                       </div>
                     </div>
@@ -375,42 +376,42 @@ export default function VerificationWorkspace({
 
                 {/* Grid Comparison List */}
                 <div className="space-y-3">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Detalle de Confrontación de Datos</h4>
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Detalle de Confrontación de Datos</h4>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                     {Object.values(report.comparisons).map((comp: any) => (
                       <div 
                         key={comp.field}
-                        className={`p-3 rounded-lg border text-xs flex flex-col justify-between space-y-2 transition-all ${
+                        className={`p-3.5 rounded-xl border text-xs flex flex-col justify-between space-y-2 transition-all ${
                           comp.isMatch 
-                            ? "bg-green-50/50 border-green-100" 
-                            : "bg-red-50/50 border-red-100 animate-pulse"
+                            ? "bg-emerald-500/5 border-emerald-500/15" 
+                            : "bg-red-500/5 border-red-500/15"
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-semibold text-slate-700">{comp.label}</span>
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          <span className="font-bold text-slate-700">{comp.label}</span>
+                          <span className={`px-2 py-0.5 rounded-lg text-[9px] font-bold border ${
                             comp.isMatch 
-                              ? "bg-green-100 text-green-800 border border-green-200" 
-                              : "bg-red-100 text-red-800 border border-red-200"
+                              ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/20" 
+                              : "bg-red-500/10 text-red-700 border-red-500/20"
                           }`}>
                             {comp.isMatch ? "Coincide" : "Discrepa"}
                           </span>
                         </div>
 
-                        <div className="space-y-1">
+                        <div className="space-y-1.5">
                           <div className="flex items-center justify-between text-[11px]">
                             <span className="text-slate-400">En Sistema:</span>
-                            <span className="font-mono font-bold text-slate-800 bg-slate-100/80 px-1.5 py-0.5 rounded-sm">
+                            <span className="font-mono font-bold text-slate-800 bg-slate-100/80 px-1.5 py-0.5 rounded-md border border-slate-200/20">
                               {comp.field === "costoUnidad" ? `$${Number(comp.sheetValue).toFixed(2)}` : comp.sheetValue}
                             </span>
                           </div>
                           <div className="flex items-center justify-between text-[11px]">
-                            <span className="text-slate-400">En Documento PDF:</span>
-                            <span className={`font-mono font-bold px-1.5 py-0.5 rounded-sm ${
+                            <span className="text-slate-400">En Documento:</span>
+                            <span className={`font-mono font-bold px-1.5 py-0.5 rounded-md border ${
                               comp.isMatch 
-                                ? "text-slate-800 bg-slate-100/80" 
-                                : "text-red-700 bg-red-100/80 font-extrabold"
+                                ? "text-slate-800 bg-slate-100/80 border-slate-200/20" 
+                                : "text-red-700 bg-red-500/10 border-red-500/20 font-extrabold"
                             }`}>
                               {comp.field === "costoUnidad" ? `$${Number(comp.pdfValue).toFixed(2)}` : comp.pdfValue}
                             </span>
@@ -422,11 +423,11 @@ export default function VerificationWorkspace({
                 </div>
 
                 {/* IA Observations Box */}
-                <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-4 text-xs text-blue-950">
-                  <div className="font-bold flex items-center gap-1 text-blue-900">
-                    <Sparkles size={14} /> Observaciones y Notas de la IA
+                <div className="bg-blue-500/5 border border-blue-500/20 backdrop-blur-md rounded-2xl p-4 text-xs text-blue-900 shadow-2xs">
+                  <div className="font-extrabold flex items-center gap-1.5 text-blue-800 uppercase tracking-wide text-[10px]">
+                    <Sparkles size={14} className="text-blue-600" /> Observaciones y Notas de la IA
                   </div>
-                  <p className="mt-1.5 leading-relaxed font-medium">
+                  <p className="mt-2 leading-relaxed font-medium text-slate-600">
                     {report.observaciones}
                   </p>
                 </div>
