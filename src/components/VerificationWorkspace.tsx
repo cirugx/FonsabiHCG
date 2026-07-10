@@ -40,6 +40,7 @@ export default function VerificationWorkspace({
   const [errorMsg, setErrorMsg] = useState("");
   const [rejectNote, setRejectNote] = useState("");
   const [isRejectMode, setIsRejectMode] = useState(false);
+  const [activeDocTab, setActiveDocTab] = useState<number>(0);
   
   // Modals
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -344,8 +345,8 @@ export default function VerificationWorkspace({
                 {/* Match Percentage circular widget */}
                 <div className="bg-white/40 backdrop-blur-md p-4 rounded-2xl border border-white/60 flex items-center justify-between shadow-[0_4px_24px_rgba(15,23,42,0.02)]">
                   <div>
-                    <h4 className="text-xs font-extrabold text-slate-800 tracking-tight uppercase">Cotejo del Documento</h4>
-                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Se evaluaron 6 campos críticos del almacén</p>
+                    <h4 className="text-xs font-extrabold text-slate-800 tracking-tight uppercase">Dictamen General del Expediente</h4>
+                    <p className="text-[11px] text-slate-500 mt-1 font-medium">Auditoría multi-fase y correlación de 5 documentos regulatorios</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="relative flex items-center justify-center">
@@ -365,18 +366,320 @@ export default function VerificationWorkspace({
                       <div className={`text-xs font-black tracking-wide ${
                         report.matchPercentage === 100 ? "text-emerald-600" : "text-amber-600"
                       }`}>
-                        {report.matchPercentage === 100 ? "COINCIDENCIA TOTAL" : "DISCREPANCIAS DETECTADAS"}
+                        {report.matchPercentage === 100 ? "AUDITORÍA CONFORME" : "ALERTA DE DISCREPANCIA"}
                       </div>
                       <div className="text-[10px] text-slate-400 font-bold font-mono mt-0.5">
-                        {report.matchPercentage === 100 ? "Cotejo limpio, listo" : "Se aconseja cautela"}
+                        {report.matchPercentage === 100 ? "Cruce exitoso de lote/registro" : "Revisar alertas de amarre"}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Grid Comparison List */}
+                {/* FASE 1: Segmentación de Páginas */}
+                {report.segmentation && report.segmentation.length > 0 && (
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-extrabold font-mono border border-blue-200">1</span>
+                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Fase 1: Segmentación de Páginas en PDF</h4>
+                    </div>
+                    <div className="bg-slate-50/50 rounded-xl border border-slate-200/40 p-3.5 grid grid-cols-2 md:grid-cols-5 gap-2.5">
+                      {report.segmentation.map((seg, idx) => (
+                        <div key={idx} className="bg-white/80 p-2.5 rounded-lg border border-slate-100 flex flex-col justify-between shadow-3xs">
+                          <span className="text-[10px] font-extrabold text-slate-800 line-clamp-1">{seg.documentType}</span>
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="text-[9px] font-bold font-mono bg-blue-50 text-blue-600 border border-blue-100/60 px-1.5 py-0.5 rounded">
+                              Pág. {seg.startPage}-{seg.endPage}
+                            </span>
+                            <span className="text-[8px] font-medium text-emerald-600 flex items-center gap-0.5 bg-emerald-50 border border-emerald-100/60 px-1 py-0.2 rounded">
+                              {seg.confidence}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* FASE 2: Fichas Técnicas por Documento (Isolated views) */}
                 <div className="space-y-3">
-                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Detalle de Confrontación de Datos</h4>
+                  <div className="flex items-center gap-1.5">
+                    <span className="flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 text-[10px] font-extrabold font-mono border border-indigo-200">2</span>
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Fase 2: Datos Extraídos por Tipo de Documento</h4>
+                  </div>
+
+                  {/* Tabs Selector */}
+                  <div className="flex flex-wrap gap-1 bg-slate-100/85 p-1 rounded-xl text-[10px] font-bold border border-slate-200/40 animate-fade-in">
+                    {[
+                      { label: "Nota Entrada (RB)", isPresent: !!report.doc1 },
+                      { label: "Remisión Comercial", isPresent: !!report.doc2 },
+                      { label: "Orden IMSS", isPresent: !!report.doc3 },
+                      { label: "Certificado CoA", isPresent: !!report.doc4 },
+                      { label: "Registro COFEPRIS", isPresent: !!report.doc5 }
+                    ].map((tab, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setActiveDocTab(idx)}
+                        className={`flex-1 py-2 px-2.5 rounded-lg transition-all text-center whitespace-nowrap cursor-pointer ${
+                          activeDocTab === idx
+                            ? "bg-white text-indigo-600 shadow-2xs border border-slate-200/20"
+                            : "text-slate-500 hover:text-slate-800"
+                        }`}
+                      >
+                        {tab.label}
+                        {!tab.isPresent && <span className="ml-1 text-[8px] text-slate-400 font-normal italic">(vacío)</span>}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Tab Panels */}
+                  <div className="bg-white/60 rounded-2xl border border-white/60 p-4 min-h-[160px] shadow-3xs">
+                    {activeDocTab === 0 && (
+                      report.doc1 ? (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 text-xs">
+                          <div className="col-span-2 md:col-span-3 border-b border-dashed border-slate-100 pb-2 flex justify-between items-center">
+                            <span className="font-extrabold text-slate-800 text-[11px] uppercase tracking-wide">Recibo de Bienes (Nota de Entrada)</span>
+                            <span className="text-[9px] font-mono text-slate-400">Folio: {report.doc1.numeroNota}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Fecha Recepción:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc1.fechaRecepcion}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Clave Fonsabi:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc1.codigoFonsabi}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Lote Recibido:</span>
+                            <span className="font-mono font-bold text-blue-600 bg-blue-50 border border-blue-100 px-1.5 py-0.5 rounded">{report.doc1.numeroLote}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Fecha Caducidad:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc1.fechaCaducidad}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Cantidad Recibida:</span>
+                            <span className="font-bold text-slate-800">{report.doc1.cantidadRecibida} piezas</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Remisión Comercial:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc1.numeroRemisionCapturado}</span>
+                          </div>
+                          <div className="col-span-2 md:col-span-3 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                            <span className="text-slate-400 block text-[10px]">Descripción del Insumo:</span>
+                            <span className="font-semibold text-slate-700">{report.doc1.descripcionArticulo}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 text-slate-400 text-xs italic">Documento "Nota de Entrada" no fue encontrado en el PDF.</div>
+                      )
+                    )}
+
+                    {activeDocTab === 1 && (
+                      report.doc2 ? (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 text-xs">
+                          <div className="col-span-2 md:col-span-3 border-b border-dashed border-slate-100 pb-2 flex justify-between items-center">
+                            <span className="font-extrabold text-slate-800 text-[11px] uppercase tracking-wide">Remisión Comercial del Proveedor</span>
+                            <span className="text-[9px] font-mono text-slate-400">Folio: {report.doc2.folioRemision}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Fecha Emisión:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc2.fechaEmision}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">RFC Proveedor:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc2.rfcProveedor}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Lote Comercial:</span>
+                            <span className="font-mono font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-1.5 py-0.5 rounded">{report.doc2.lote}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Fecha Caducidad:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc2.fechaCaducidad}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Cantidad Facturada:</span>
+                            <span className="font-bold text-slate-800">{report.doc2.cantidad} piezas</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Precio Unitario:</span>
+                            <span className="font-bold text-emerald-700">${Number(report.doc2.costoUnidad).toFixed(2)}</span>
+                          </div>
+                          <div className="col-span-2 md:col-span-3 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                            <span className="text-slate-400 block text-[10px]">Referencia de Registro Sanitario en Factura:</span>
+                            <span className="font-semibold text-slate-700 italic">"{report.doc2.registroSanitarioTexto || "Ninguna"}"</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 text-slate-400 text-xs italic">Documento "Remisión Comercial" no fue encontrado en el PDF.</div>
+                      )
+                    )}
+
+                    {activeDocTab === 2 && (
+                      report.doc3 ? (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 text-xs">
+                          <div className="col-span-2 md:col-span-3 border-b border-dashed border-slate-100 pb-2 flex justify-between items-center">
+                            <span className="font-extrabold text-slate-800 text-[11px] uppercase tracking-wide">Orden de Remisión IMSS-BIENESTAR</span>
+                            <span className="text-[9px] font-mono text-slate-400">Folio: {report.doc3.folioOrden}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Fecha Expedición:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc3.fechaExpedicion}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Clave de Cuadro Básico:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc3.claveArticulo}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Lote Asignado:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc3.loteAsignado}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Fecha Caducidad:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc3.fechaCaducidad}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Cantidad Solicitada:</span>
+                            <span className="font-bold text-slate-800">{report.doc3.cantidadSolicitada} piezas</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Cantidad Autorizada:</span>
+                            <span className="font-bold text-slate-800">{report.doc3.cantidadAutorizada} piezas</span>
+                          </div>
+                          <div className="col-span-2 md:col-span-3 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                            <span className="text-slate-400 block text-[10px]">Medicamento Solicitado:</span>
+                            <span className="font-semibold text-slate-700">{report.doc3.descripcionArticulo}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 text-slate-400 text-xs italic">Documento "Orden IMSS-BIENESTAR" no fue encontrado en el PDF.</div>
+                      )
+                    )}
+
+                    {activeDocTab === 3 && (
+                      report.doc4 ? (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 text-xs">
+                          <div className="col-span-2 md:col-span-3 border-b border-dashed border-slate-100 pb-2 flex justify-between items-center">
+                            <span className="font-extrabold text-slate-800 text-[11px] uppercase tracking-wide">Certificado de Análisis (CoA) de Control de Calidad</span>
+                            <span className="text-[9px] font-mono text-slate-400">CoA: {report.doc4.numeroCertificado}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Laboratorio Fabricante:</span>
+                            <span className="font-bold text-slate-800">{report.doc4.nombreFabricante}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Lote Analizado Físicamente:</span>
+                            <span className="font-mono font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded">{report.doc4.numeroLoteAnalizado}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Fecha Fabricación:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc4.fechaFabricacionElaboracion}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Fecha Caducidad:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc4.fechaCaducidad}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Forma Farmacéutica:</span>
+                            <span className="font-bold text-slate-800">{report.doc4.formaFarmaceutica}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Dictamen Final:</span>
+                            <span className="font-bold text-emerald-700 bg-emerald-100/60 px-2 py-0.5 rounded uppercase">{report.doc4.resultadoAnalisis}</span>
+                          </div>
+                          <div className="col-span-2 md:col-span-3 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                            <span className="text-slate-400 block text-[10px]">Sustancia Analizada:</span>
+                            <span className="font-semibold text-slate-700">{report.doc4.nombreProducto}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 text-slate-400 text-xs italic">Documento "Certificado de Análisis (CoA)" no fue encontrado en el PDF.</div>
+                      )
+                    )}
+
+                    {activeDocTab === 4 && (
+                      report.doc5 ? (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 text-xs">
+                          <div className="col-span-2 md:col-span-3 border-b border-dashed border-slate-100 pb-2 flex justify-between items-center">
+                            <span className="font-extrabold text-slate-800 text-[11px] uppercase tracking-wide">Registro Sanitario Oficial COFEPRIS</span>
+                            <span className="text-[9px] font-mono text-slate-400">Reg: {report.doc5.numeroRegistroSanitario}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Titular de la Patente/Registro:</span>
+                            <span className="font-bold text-slate-800">{report.doc5.titularRegistro}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Sustancia/Medicamento:</span>
+                            <span className="font-bold text-slate-800">{report.doc5.nombreMedicamento}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Forma Farmacéutica Aprobada:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc5.formaFarmaceuticaAutorizada}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Fecha Vigencia:</span>
+                            <span className="font-mono font-bold text-slate-800">{report.doc5.fechaVigencia}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Estado de Vigencia:</span>
+                            <span className={`font-bold px-2 py-0.5 rounded uppercase ${
+                              report.doc5.estatusVigencia.toLowerCase().includes("vigente")
+                                ? "text-emerald-700 bg-emerald-50 border border-emerald-100"
+                                : "text-red-700 bg-red-50 border border-red-100"
+                            }`}>{report.doc5.estatusVigencia}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 text-slate-400 text-xs italic">Documento "Registro Sanitario COFEPRIS" no fue encontrado en el PDF.</div>
+                      )
+                    )}
+                  </div>
+                </div>
+
+                {/* AMARRE CRUZADO PROGRAMÁTICO */}
+                {report.amarres && report.amarres.length > 0 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-extrabold font-mono border border-emerald-200">3</span>
+                      <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Fase 3: Resultados de Amarre Cruzado (Garantía de Calidad)</h4>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-3">
+                      {report.amarres.map((amarre) => (
+                        <div
+                          key={amarre.id}
+                          className={`p-3.5 rounded-xl border text-xs flex flex-col md:flex-row md:items-start justify-between gap-3.5 transition-all ${
+                            amarre.isMatch
+                              ? "bg-emerald-500/5 border-emerald-500/15"
+                              : "bg-red-500/5 border-red-500/15"
+                          }`}
+                        >
+                          <div className="space-y-1 md:max-w-xl">
+                            <div className="flex items-center gap-2">
+                              <span className="font-extrabold text-slate-800">{amarre.label}</span>
+                              <span className={`px-2 py-0.5 rounded-lg text-[8px] font-bold border uppercase tracking-wider ${
+                                amarre.isMatch
+                                  ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/20"
+                                  : "bg-red-500/10 text-red-700 border-red-500/20 font-black animate-pulse"
+                              }`}>
+                                {amarre.isMatch ? "Cumple (PASS)" : "Falla (ALERT)"}
+                              </span>
+                            </div>
+                            <p className="text-[10px] text-slate-400 font-medium">{amarre.description}</p>
+                            <p className="text-[11px] text-slate-600 font-medium pt-1 font-mono whitespace-pre-line">{amarre.details}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Comparisons List (Top Level vs Sheets) */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="flex items-center justify-center w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-extrabold font-mono border border-amber-200">4</span>
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Fase 4: Confrontación Física vs Base de Datos (Sistema)</h4>
+                  </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                     {Object.values(report.comparisons).map((comp: any) => (
